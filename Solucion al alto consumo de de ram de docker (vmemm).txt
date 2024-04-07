@@ -1,0 +1,16 @@
+
+Docker por defecto al parecer no tiene limites al momento de consumir recursos de la pc. De hecho si se tiene muchos contenedores (por ejemplo postgres + mongodb + redis)
+el consumo de ram se puede disparar mediante el proceso vmemm que se puede visualizar en el administrador de tareas.
+Tranquilamente dicho proceso  puede llegar a consumir cantidades indeseadas de ram  como por ejemplo 7-9gb Para evitar esto existe el archivo
+.wslconfig que nos permite configurar la cantidad de recursos que usa docker en nuestra maquina.
+
+1)colocar el archico .wslconfig en la carpeta  C:\Users\<<tu nombre de usuario>>
+
+
+El archivo se puede configurar. En este caso particular hace uso de 2 nucleos y 1gb de ram pero se puede disminuir mas incluso el uso de recursos a por ejemplo
+1 nucleo y 512mb de ram
+
+2) Reiniciar windows
+
+3) ejecutar nuevamente docker , abrir administrador de tareas y verificar que "vmemm" ahora consume 1gb de ram
+

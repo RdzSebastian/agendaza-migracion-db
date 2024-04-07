@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  agendaza-db:
+    image: postgres:15-alpine
+    container_name: agendaza-container
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=agendaza
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./Docker/init_db.sh:/docker-entrypoint-initdb.d/01_init_db.sh
+
+  geserveapp-db:
+    image: postgres:15-alpine
+    container_name: geserveapp-container
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=geserveapp
+    ports:
+      - '5433:5432'
+    volumes:
+      - geserveapp-db:/var/lib/postgresql/data
+
+  pgAdmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    depends_on:
+      - agendaza-db
+      - geserveapp-db
+    ports:
+      - 8080:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=estonia@mail.com
+      - PGADMIN_DEFAULT_PASSWORD=1234
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+      - ./pgadmin:/certs/server.cert
+      - ./pgadmin:/certs/server.key
+      - ./pgadmin:/pgadmin4/servers.json
+
+volumes:
+  db:
+  geserveapp-db:
