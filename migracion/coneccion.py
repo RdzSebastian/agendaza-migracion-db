@@ -51,11 +51,3 @@ print(df)
 
 
 
-cursor_geservapp =  conexion_gersevapp.cursor()
-query = 'SELECT * FROM  usuario'
-cursor_agendaza.execute(query)
-registros = cursor_agendaza.fetchall()
-
-print("geservapp app \n")
-df = pd.DataFrame(registros)
-print(df)
