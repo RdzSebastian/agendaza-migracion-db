@@ -15,11 +15,11 @@ agendaza_db_parametros = {
 
 
 geservapp_db_parametros = {
-    'dbname': 'geservapp',
+    'dbname': 'geserveapp',
     'user': 'postgres',
     'password': 'postgres',
     'host': 'localhost',
-    'port': '5432'  
+    'port': '5433'  
 }
 
 
@@ -47,6 +47,7 @@ class ConexionBD:
         registro = self.cursor.fetchall()
         df = pd.DataFrame(registro)
         print(df)
+        print("\n")
 
 
 
@@ -54,6 +55,10 @@ conexion_agendaza = ConexionBD(agendaza_db_parametros)
 conexion_agendaza.realizar_conexion()
 conexion_agendaza.probar_consulta('select * from usuario')
 
+
+conexion_geservapp = ConexionBD(geservapp_db_parametros)
+conexion_geservapp.realizar_conexion()
+conexion_geservapp.probar_consulta('select * from usuario')
 
 
 
