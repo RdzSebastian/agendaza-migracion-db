@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from sqlalchemy.orm import sessionmaker
 from typing import TypeVar, Generic
 
-from model.geserveapp.UsuarioLegacy import UsuarioLegacy
+from ETL.gerservapp_legacy.UsuarioLegacy import UsuarioLegacy
 
 T = TypeVar('T')  # Define un tipo genérico T
 
