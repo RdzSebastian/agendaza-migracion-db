@@ -25,7 +25,11 @@ def transformacion(obj: Legacy):
 def columnasAuxiliares():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
+    global clienteReseveappRepository
+
+
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_usuario_legacy INTEGER unique ")
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_cliente_legacy INTEGER unique ")
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER unique")
 
 
@@ -48,7 +52,7 @@ def ETLUsuario():
 
 
 def ETLCliente():
-    global clienteRepository
+    global clienteReseveappRepository
     global usuarioAgendazaRepository
 
 
@@ -64,11 +68,11 @@ from repositorio.Repository import UsuarioLegacyRepository
 from repositorio.UsuarioRepository import UsuarioRepository
 from repositorio.ClienteRepository import ClienteLegacyRepository
 
-clienteRepository = ClienteLegacyRepository(conexionGeserveApp.session)
+clienteReseveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
 
-repositorioList = [clienteRepository, usuarioLegacyRepository, usuarioAgendazaRepository]
+repositorioList = [clienteReseveappRepository, usuarioLegacyRepository, usuarioAgendazaRepository]
 
 try:
     columnasAuxiliares()

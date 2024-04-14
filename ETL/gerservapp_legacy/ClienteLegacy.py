@@ -14,17 +14,19 @@ class ClienteLegacy(conexionGeserveApp.Base, Legacy):
     nombre = Column(String)
     apellido = Column(String)
     ## cuil = Column(BigInteger)
-    #fecha_nacimiento = Column(Date)
-    #empresa = Column(String)
-    #provincia = Column(String)
+    # fecha_nacimiento = Column(Date)
+    # empresa = Column(String)
+    # provincia = Column(String)
     email = Column(String)
     celular = Column(BigInteger)
+
+
 
     def conversion(self):
         usuarioARetornar = Usuario(nombre=self.nombre,
                                    apellido=self.apellido,
                                    email=self.mail,
-                                   celular = self.celular,
+                                   celular=self.celular,
                                    id_legacy=self.id)
 
         return usuarioARetornar

@@ -2,3 +2,5 @@ ETLScript deberia correr bien en el primer intento. La segunda deberia dar ya er
 no permiten informacion duplicada y eso es lo que se espera. Si se quiere ejecutar nuevamente el script ETLScript debe
 ejecutarse primero el RollbackScript que tiene como finalidad anular toda migracion realizada previamente. Por supuesto
 si previamente nunca se ejecuto el ETLScript y ejecutamos el RollbackScript primero esto va a dar error.
+
+EL codigo de ETLScript y RollbackScrip se deben desarollar de forma simultanea

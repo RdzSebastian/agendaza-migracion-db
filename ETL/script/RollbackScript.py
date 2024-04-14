@@ -12,14 +12,17 @@ from repositorio.ClienteRepository import ClienteLegacyRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
-clienteRepository = ClienteLegacyRepository(conexionGeserveApp.session)
+clienteReseveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
 
-repositorioList = [usuarioLegacyRepository, usuarioAgendazaRepository, clienteRepository]
+repositorioList = [usuarioLegacyRepository, usuarioAgendazaRepository, clienteReseveappRepository]
 
 try:
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_usuario_legacy IS NOT NULL")
+    usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_cliente_legacy IS NOT NULL")
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_cliente_legacy")
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
+
 except Exception as e:
     for repositorios in repositorioList:
         repositorios.rollback()

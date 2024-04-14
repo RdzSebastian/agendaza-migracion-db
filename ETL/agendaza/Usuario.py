@@ -17,6 +17,7 @@ class Usuario(conexionAgendaza.Base):
     fecha_alta = Column(Date, default=date.today())
     fecha_baja = Column(Date, nullable=True)
     id_usuario_legacy = Column(Integer, unique=True)
+    id_cliente_legacy = Column(Integer, unique=True)
 
     def __init__(self, nombre, apellido, email, username, password, id_usuario_legacy):
         self.nombre = nombre

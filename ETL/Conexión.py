@@ -50,26 +50,6 @@ class ConexionBD:
             self.engine.dispose()
             print("Conexión cerrada correctamente")
 
-    def realizar_consulta(self, query):
-        if self.engine is None:
-            self.realizar_conexion()
-        try:
-            with self.session() as session:
-                resultado = pd.read_sql_query(query, session.bind)
-                return resultado
-        except exc.SQLAlchemyError as e:
-            print("Error al ejecutar la consulta:", e)
-            return None
-
-    def visualizar_consulta(self, query):
-        print(self.realizar_consulta(query))
-
-    def rollback(self):
-        self.session.rollback()
-
-
-
 
 conexionAgendaza = ConexionBD(agendaza_db_parametros)
 conexionGeserveApp = ConexionBD(geservapp_db_parametros)
-
