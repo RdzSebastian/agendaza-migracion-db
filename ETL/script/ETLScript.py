@@ -2,6 +2,7 @@ from ETL.Conexión import conexionAgendaza
 from ETL.Conexión import conexionGeserveApp
 import pandas as pd
 from ETL.gerservapp_legacy.Legacy import Legacy
+import traceback
 
 
 # Solo usarlo para probar que se hayan traido los datos desde la  desde la BD
@@ -26,7 +27,6 @@ def columnasAuxiliares():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
     global clienteReseveappRepository
-
 
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_usuario_legacy INTEGER unique ")
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_cliente_legacy INTEGER unique ")
@@ -55,6 +55,20 @@ def ETLCliente():
     global clienteReseveappRepository
     global usuarioAgendazaRepository
 
+    # Extraccion
+    clienteLegacyList = clienteReseveappRepository.getAll()
+
+    #visualizar(clienteLegacyList)
+
+    # TRANSFORMACION
+
+    usuarioAgendazaList = transformacion(clienteLegacyList)
+
+    visualizar(usuarioAgendazaList)
+
+    # LOAD/CARGA/MIGRACION -> ETL Finalizado
+    usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
+
 
 #################################################################################################################
 '''
@@ -77,11 +91,18 @@ repositorioList = [clienteReseveappRepository, usuarioLegacyRepository, usuarioA
 try:
     columnasAuxiliares()
     ETLUsuario()
+    ETLCliente()
 except Exception as e:
+
+    error = e
 
     for repositorios in repositorioList:
         repositorios.rollback()
-    print("Se realizó un rollback debido a:", e)
+
+    print("Se realizó un rollback debido a:", error)
+    traceback.print_exc()
+
+
 
 conexionAgendaza.cerrar_conexion()
 conexionGeserveApp.cerrar_conexion()

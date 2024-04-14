@@ -26,7 +26,9 @@ try:
 except Exception as e:
     for repositorios in repositorioList:
         repositorios.rollback()
+
     print("No se puede descartar todos los cambios realizado por ETLScript debido a : ", e)
+
 finally:
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()

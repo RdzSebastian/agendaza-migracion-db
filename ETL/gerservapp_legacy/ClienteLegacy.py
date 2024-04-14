@@ -25,8 +25,8 @@ class ClienteLegacy(conexionGeserveApp.Base, Legacy):
     def conversion(self):
         usuarioARetornar = Usuario(nombre=self.nombre,
                                    apellido=self.apellido,
-                                   email=self.mail,
+                                   email=self.email,
                                    celular=self.celular,
-                                   id_legacy=self.id)
+                                   id_cliente_legacy=self.id)
 
         return usuarioARetornar
