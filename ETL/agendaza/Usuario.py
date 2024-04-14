@@ -1,16 +1,12 @@
-from sqlalchemy import Column, Integer, String, BigInteger, Date
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func
 from ETL.Conexión import conexionAgendaza
 from datetime import date
-from sqlalchemy import func
-
-Base = declarative_base()
 
 
 class Usuario(conexionAgendaza.Base):
     __tablename__ = 'usuario'
 
-    id = Column(Integer(), primary_key=True)
+    id = Column(Integer, primary_key=True)
     nombre = Column(String)
     apellido = Column(String)
     celular = Column(BigInteger)
@@ -18,9 +14,9 @@ class Usuario(conexionAgendaza.Base):
     username = Column(String, default='')
     password = Column(String, default='')
     fecha_nacimiento = Column(Date, default=func.current_date())
-    fecha_alta = Column(Date)
+    fecha_alta = Column(Date, default=date.today())
     fecha_baja = Column(Date, nullable=True)
-    id_legacy = Column(Integer(), unique=True)
+    id_legacy = Column(Integer, unique=True)
 
     def __init__(self, nombre, apellido, email, username, password, id_legacy):
         self.nombre = nombre
@@ -29,7 +25,7 @@ class Usuario(conexionAgendaza.Base):
         self.username = username
         self.password = password
         self.fecha_alta = date.today()
-        self.fechaNacimiento = date.today()
+        self.fecha_nacimiento = date.today()
         self.celular = 0
         self.id_legacy = id_legacy
 

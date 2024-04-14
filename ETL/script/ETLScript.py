@@ -26,11 +26,9 @@ def columnasAuxiliares():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
     ##Agregar constraint a futuro
-    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_legacy")
-    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_legacy INTEGER UNIQUE")
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_legacy INTEGER unique ")
     ##Agregar constraint a futuro
-    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
-    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER UNIQUE")
+    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER unique")
 
 
 def ETLUsuario():
@@ -44,8 +42,7 @@ def ETLUsuario():
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
 
-
-    #Legacy por las dudas tambien tiene su carga pero para eso antes asignamos  el id de la bd
+    # Solo por las dudas
     for item in usuarioLegacyList:
         item.asignarIdAgendaza()
 
@@ -55,8 +52,6 @@ def ETLUsuario():
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 
-from ETL.agendaza.Usuario import Usuario
-from ETL.gerservapp_legacy.UsuarioLegacy import UsuarioLegacy
 from repositorio.Repository import UsuarioLegacyRepository
 from repositorio.UsuarioRepository import UsuarioRepository
 
@@ -65,3 +60,6 @@ usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.Session)
 
 columnasAuxiliares()
 ETLUsuario()
+
+conexionAgendaza.cerrar_conexion()
+conexionGeserveApp.cerrar_conexion()

@@ -26,7 +26,7 @@ class UsuarioLegacy(conexionGeserveApp.Base, Legacy):
     account_non_locked = Column(Boolean)
     credentials_non_expired = Column(Boolean)
     enabled = Column(Boolean)
-    id_agendaza = Column(Integer, unique=True, default=0)
+    id_agendaza = Column(Integer, unique=True)
 
     usuarioAgendaza = None
 
