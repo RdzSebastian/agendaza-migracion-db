@@ -10,7 +10,7 @@ Base = declarative_base()
 class Usuario(conexionAgendaza.Base):
     __tablename__ = 'usuario'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer(), primary_key=True)
     nombre = Column(String)
     apellido = Column(String)
     celular = Column(BigInteger)
@@ -20,10 +20,9 @@ class Usuario(conexionAgendaza.Base):
     fecha_nacimiento = Column(Date, default=func.current_date())
     fecha_alta = Column(Date)
     fecha_baja = Column(Date, nullable=True)
-    id_legacy = Column(Integer, unique=True)
+    id_legacy = Column(Integer(), unique=True)
 
-
-    def __init__(self, nombre, apellido, email, username='', password=''):
+    def __init__(self, nombre, apellido, email, username, password, id_legacy):
         self.nombre = nombre
         self.apellido = apellido
         self.email = email
@@ -32,6 +31,7 @@ class Usuario(conexionAgendaza.Base):
         self.fecha_alta = date.today()
         self.fechaNacimiento = date.today()
         self.celular = 0
+        self.id_legacy = id_legacy
 
     def establecerFechaBajaSiCorresponde(self, enabled: bool):
         if not enabled:

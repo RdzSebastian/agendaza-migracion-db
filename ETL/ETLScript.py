@@ -45,6 +45,13 @@ def ETLUsuario():
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
 
 
+    #Legacy por las dudas tambien tiene su carga pero para eso antes asignamos  el id de la bd
+    for item in usuarioLegacyList:
+        item.asignarIdAgendaza()
+
+    usuarioLegacyRepository.saveAll(usuarioLegacyList)
+
+
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 

@@ -26,6 +26,9 @@ class UsuarioLegacy(conexionGeserveApp.Base, Legacy):
     account_non_locked = Column(Boolean)
     credentials_non_expired = Column(Boolean)
     enabled = Column(Boolean)
+    id_agendaza = Column(Integer, unique=True, default=0)
+
+    usuarioAgendaza = None
 
     def __init__(self, nombre, apellido, mail, username, password,
                  account_non_expired=True, account_non_locked=True,
@@ -45,7 +48,13 @@ class UsuarioLegacy(conexionGeserveApp.Base, Legacy):
                                    apellido=self.apellido,
                                    email=self.mail,
                                    username=self.username,
-                                   password=self.password)
+                                   password=self.password,
+                                   id_legacy=self.id)
         usuarioARetornar.establecerFechaBajaSiCorresponde(self.enabled)
 
+        self.usuarioAgendaza = usuarioARetornar
+
         return usuarioARetornar
+
+    def asignarIdAgendaza(self):
+        self.id_agendaza = self.usuarioAgendaza.id
