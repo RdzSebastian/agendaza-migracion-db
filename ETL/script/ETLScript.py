@@ -25,9 +25,7 @@ def transformacion(obj: Legacy):
 def columnasAuxiliares():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
-    ##Agregar constraint a futuro
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_legacy INTEGER unique ")
-    ##Agregar constraint a futuro
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER unique")
 
 
@@ -49,12 +47,21 @@ def ETLUsuario():
     usuarioLegacyRepository.saveAll(usuarioLegacyList)
 
 
+def ETLCliente():
+    global clienteRepository
+    global usuarioAgendazaRepository
+
+
+
+
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 
 from repositorio.Repository import UsuarioLegacyRepository
 from repositorio.UsuarioRepository import UsuarioRepository
+from repositorio.ClienteRepository import ClienteLegacyRepository
 
+clienteRepository = ClienteLegacyRepository(conexionGeserveApp.Session)
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.Session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.Session)
 

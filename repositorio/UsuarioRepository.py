@@ -1,6 +1,4 @@
-from abc import ABC
 from sqlalchemy.orm import sessionmaker
-from typing import TypeVar, Generic
 from repositorio.Repository import Repositorio
 from ETL.agendaza.Usuario import Usuario
 

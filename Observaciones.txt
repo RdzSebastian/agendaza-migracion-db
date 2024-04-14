@@ -1,6 +1,9 @@
 
 Observaciones:
 	Pendientes/Sin resolver
-	* (No resuelto) Existe una tabla llamada empresa en la BD de agendaza mientras que en geserveapp la empresa es una columna de la tabla clientes
-    * (Duda)
+	* (Comentario-pendiente) Existe una tabla llamada empresa en la BD de agendaza mientras que en geserveapp la empresa es una columna de la tabla clientes
+    * (duda) cuil de la tabla cliente de geserveapp no tienen equivalente en usuarios de agendazas ,la unica manera de migrarlos
+    es creando esas columnas en  agendaza.usuario, ¿ Deberia hacerlo?
+    * (duda) en agendaza.usuario no existe una relacion sexo que si la hay en cliente y usuario de geserveapp.
+      ¿Deberia ignorar completamente esto y por lo tanto omitir su migracion?
 		
