@@ -20,6 +20,8 @@ class Usuario(conexionAgendaza.Base):
     fecha_nacimiento = Column(Date, default=func.current_date())
     fecha_alta = Column(Date)
     fecha_baja = Column(Date, nullable=True)
+    id_legacy = Column(Integer, unique=True)
+
 
     def __init__(self, nombre, apellido, email, username='', password=''):
         self.nombre = nombre

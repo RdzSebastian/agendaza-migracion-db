@@ -4,6 +4,7 @@ from typing import TypeVar, Generic
 from typing import Type
 from ETL.gerservapp_legacy.UsuarioLegacy import UsuarioLegacy
 from typing import List
+from sqlalchemy import text
 
 T = TypeVar('T')  # Define un tipo genérico T
 
@@ -29,6 +30,11 @@ class Repositorio(ABC, Generic[T]):
         for obj in objs:
             self.session.add(obj)
         self.session.commit()
+
+    def sqlNativeQuery(self, query: str):
+        retornar = self.session.execute(text(query))
+        self.session.commit()
+        return retornar
 
 
 class UsuarioLegacyRepository(Repositorio[UsuarioLegacy]):

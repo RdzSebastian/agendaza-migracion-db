@@ -22,6 +22,29 @@ def transformacion(obj: Legacy):
     return listaARetornar
 
 
+def columnasAuxiliares():
+    global usuarioLegacyRepository
+    global usuarioAgendazaRepository
+    ##Agregar constraint a futuro
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_legacy")
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_legacy INTEGER UNIQUE")
+    ##Agregar constraint a futuro
+    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
+    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER UNIQUE")
+
+
+def ETLUsuario():
+    global usuarioLegacyRepository
+    global usuarioAgendazaRepository
+
+    # EXTRACCION
+    usuarioLegacyList = usuarioLegacyRepository.getAll()
+    # TRANSFORMACION
+    usuarioAgendazaList = transformacion(usuarioLegacyList)
+    # LOAD/CARGA/MIGRACION -> ETL Finalizado
+    usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
+
+
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 
@@ -33,12 +56,5 @@ from repositorio.UsuarioRepository import UsuarioRepository
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.Session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.Session)
 
-# EXTRACCION
-usuarioLegacyList = usuarioLegacyRepository.getAll()
-
-# TRANSFORMACION
-usuarioAgendazaList = transformacion(usuarioLegacyList)
-
-# LOAD/CARGA/MIGRACION -> ETL Finalizado
-
-usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
+columnasAuxiliares()
+ETLUsuario()
