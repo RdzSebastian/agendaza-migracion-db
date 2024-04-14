@@ -25,7 +25,7 @@ geservapp_db_parametros = {
 class ConexionBD:
     db_parametros = None
     engine = None
-    Session = None
+    session = None
     Base = None
 
     def __init__(self, db_parametros):
@@ -38,7 +38,7 @@ class ConexionBD:
         try:
             url = self.construir_url()
             self.engine = create_engine(url)
-            self.Session = sessionmaker(bind=self.engine)
+            self.session = sessionmaker(bind=self.engine)
             print(f"Conexión a la base de datos {self.db_parametros['dbname']} establecida correctamente")
             self.Base = declarative_base()
             self.Base.metadata.create_all(self.engine, checkfirst=True)
@@ -54,7 +54,7 @@ class ConexionBD:
         if self.engine is None:
             self.realizar_conexion()
         try:
-            with self.Session() as session:
+            with self.session() as session:
                 resultado = pd.read_sql_query(query, session.bind)
                 return resultado
         except exc.SQLAlchemyError as e:
@@ -63,6 +63,11 @@ class ConexionBD:
 
     def visualizar_consulta(self, query):
         print(self.realizar_consulta(query))
+
+    def rollback(self):
+        self.session.rollback()
+
+
 
 
 conexionAgendaza = ConexionBD(agendaza_db_parametros)

@@ -25,7 +25,7 @@ def transformacion(obj: Legacy):
 def columnasAuxiliares():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
-    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_legacy INTEGER unique ")
+    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_usuario_legacy INTEGER unique ")
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER unique")
 
 
@@ -52,8 +52,6 @@ def ETLCliente():
     global usuarioAgendazaRepository
 
 
-
-
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 
@@ -61,12 +59,21 @@ from repositorio.Repository import UsuarioLegacyRepository
 from repositorio.UsuarioRepository import UsuarioRepository
 from repositorio.ClienteRepository import ClienteLegacyRepository
 
-clienteRepository = ClienteLegacyRepository(conexionGeserveApp.Session)
-usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.Session)
-usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.Session)
+clienteRepository = ClienteLegacyRepository(conexionGeserveApp.session)
+usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
+usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
+# Importe : A medida que se crean los repositorios crear
+repositorioList = [clienteRepository, usuarioLegacyRepository, usuarioAgendazaRepository]
 
-columnasAuxiliares()
-ETLUsuario()
+try:
+    columnasAuxiliares()
+    ETLUsuario()
+except Exception as e:
+
+    for repositorios in repositorioList:
+        repositorios.rollback()
+
+    print("Se realizó un rollback debido a:", e)
 
 conexionAgendaza.cerrar_conexion()
 conexionGeserveApp.cerrar_conexion()

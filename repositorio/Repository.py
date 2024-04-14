@@ -36,6 +36,9 @@ class Repositorio(ABC, Generic[T]):
         self.session.commit()
         return retornar
 
+    def rollback(self):
+        self.session.rollback()
+
 
 class UsuarioLegacyRepository(Repositorio[UsuarioLegacy]):
     def __init__(self, session: sessionmaker):

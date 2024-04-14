@@ -40,7 +40,7 @@ class UsuarioLegacy(conexionGeserveApp.Base, Legacy):
                                    email=self.mail,
                                    username=self.username,
                                    password=self.password,
-                                   id_legacy=self.id)
+                                   id_usuario_legacy=self.id)
         usuarioARetornar.establecerFechaBajaSiCorresponde(self.enabled)
 
         self.usuarioAgendaza = usuarioARetornar
