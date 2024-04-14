@@ -1,10 +1,13 @@
 from sqlalchemy import Column, Integer, String, BigInteger, Date
 from sqlalchemy.ext.declarative import declarative_base
 from ETL.Conexión import conexionAgendaza
+from datetime import date
+from sqlalchemy import func
 
 Base = declarative_base()
 
-class Usuario(Base):
+
+class Usuario(conexionAgendaza.Base):
     __tablename__ = 'usuario'
 
     id = Column(Integer, primary_key=True)
@@ -14,17 +17,20 @@ class Usuario(Base):
     email = Column(String)
     username = Column(String, default='')
     password = Column(String, default='')
-    fechaNacimiento = Column(Date)
-    fechaAlta = Column(Date)
-    fechaBaja = Column(Date, nullable=True)
+    fecha_nacimiento = Column(Date, default=func.current_date())
+    fecha_alta = Column(Date)
+    fecha_baja = Column(Date, nullable=True)
 
-    def __init__(self, nombre, apellido, celular, email, username='', password='', fechaNacimiento=None, fechaAlta=None, fechaBaja=None):
+    def __init__(self, nombre, apellido, email, username='', password=''):
         self.nombre = nombre
         self.apellido = apellido
-        self.celular = celular
         self.email = email
         self.username = username
         self.password = password
-        self.fechaNacimiento = fechaNacimiento
-        self.fechaAlta = fechaAlta
-        self.fechaBaja = fechaBaja
+        self.fecha_alta = date.today()
+        self.fechaNacimiento = date.today()
+        self.celular = 0
+
+    def establecerFechaBajaSiCorresponde(self, enabled: bool):
+        if not enabled:
+            self.fecha_baja = date.today()

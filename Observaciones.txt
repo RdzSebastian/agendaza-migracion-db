@@ -1,0 +1,6 @@
+
+Observaciones:
+	Pendientes/Sin resolver
+	* (No resuelto) Existe una tabla llamada empresa en la BD de agendaza mientras que en geserveapp la empresa es una columna de la tabla clientes
+    * (Duda)
+		
