@@ -52,6 +52,11 @@ def ETLCliente():
     global usuarioAgendazaRepository
 
 
+#################################################################################################################
+'''
+A partir de aqui  comienza el script de migracion 
+'''
+##############################################################################################################
 conexionAgendaza.realizar_conexion()
 conexionGeserveApp.realizar_conexion()
 
@@ -62,7 +67,7 @@ from repositorio.ClienteRepository import ClienteLegacyRepository
 clienteRepository = ClienteLegacyRepository(conexionGeserveApp.session)
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
-# Importe : A medida que se crean los repositorios crear
+
 repositorioList = [clienteRepository, usuarioLegacyRepository, usuarioAgendazaRepository]
 
 try:
@@ -72,7 +77,6 @@ except Exception as e:
 
     for repositorios in repositorioList:
         repositorios.rollback()
-
     print("Se realizó un rollback debido a:", e)
 
 conexionAgendaza.cerrar_conexion()
