@@ -26,6 +26,7 @@ try:
 
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_cliente_legacy")
+    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
     empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa DROP COLUMN IF EXISTS id_legacy")
 
 
