@@ -22,11 +22,10 @@ agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos
 repositorioList = [usuarioLegacyRepository, usuarioAgendazaRepository, clienteReseveappRepository]
 
 try:
+    agendazaAppQueries.sqlNativeQuery("DELETE FROM CARGO where es_legacy IS TRUE")
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_usuario_legacy IS NOT NULL")
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_cliente_legacy IS NOT NULL")
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM CARGO where es_legacy IS TRUE")
     empresaAgendazaAppRepository.sqlNativeQuery("DELETE FROM empresa where id_legacy IS NOT NULL")
-
 
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_cliente_legacy")
