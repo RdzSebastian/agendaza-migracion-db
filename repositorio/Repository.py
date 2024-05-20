@@ -24,7 +24,7 @@ class Repositorio(ABC, Generic[T]):
 
     def getAll(self) -> list[T]:
         clase = self.obtenerClase()
-        return self.session.query(clase).all()
+        return self.session.query(clase).order_by(clase.id).all()
 
     def saveAll(self, objs: List[T]):
         for obj in objs:

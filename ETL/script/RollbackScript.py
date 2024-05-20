@@ -18,10 +18,10 @@ empresaAgendazaAppRepository = EmpresaRepository(conexionAgendaza.session)
 geserveAppQueries = Repositorio(conexionGeserveApp.session)  # Util cuando usamos nativeQuery
 agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos nativeQuery
 
-
 repositorioList = [usuarioLegacyRepository, usuarioAgendazaRepository, clienteReseveappRepository]
 
 try:
+
     agendazaAppQueries.sqlNativeQuery("DELETE FROM CARGO where es_legacy IS TRUE")
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_usuario_legacy IS NOT NULL")
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_cliente_legacy IS NOT NULL")
@@ -32,6 +32,29 @@ try:
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
     empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa DROP COLUMN IF EXISTS id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  CARGO DROP COLUMN   IF EXISTS es_legacy")
+
+    idUsuarioMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM usuario").scalar()
+
+    if idUsuarioMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE usuario_id_seq RESTART WITH {idUsuarioMax}")
+    else:
+        print("No se pudo obtener el valor de idUsuarioMax. No se reinició la secuencia.")
+
+    idEmpresaMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM empresa").scalar()
+
+    if idUsuarioMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE empresa_id_seq RESTART WITH {idEmpresaMax}")
+    else:
+        print("No se pudo obtener el valor de idEmpresaMax. No se reinició la secuencia.")
+
+
+    idCargoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM CARGO").scalar()
+
+    if idUsuarioMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE cargo_id_seq RESTART WITH {idCargoMax}")
+    else:
+        print("No se pudo obtener el valor de idCargoMax. No se reinició la secuencia.")
+
 
 
 
