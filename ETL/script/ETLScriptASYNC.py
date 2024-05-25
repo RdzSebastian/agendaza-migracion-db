@@ -75,35 +75,6 @@ async def ETLCliente():
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
 
-
-async def ETLEmpresa2():
-    global geserveAppQueries
-    global empresaAgendazaAppRepository
-    query = """
-    select s.id as salon_id , s.calle as calle ,
-     'miixeventos1@gmail.com'  as email , s.municipio , s.nombre, s.numero  from salon s;
-    """
-
-    resultado = geserveAppQueries.sqlNativeQuery(query)
-    empresas = []
-
-    for row in resultado:
-        empresa = Empresa(
-            nombre=row.nombre,
-            telefono=1111111111,  # Establecer el teléfono adecuadamente
-            email=row.email,
-            calle=row.calle,
-            numero=row.numero,
-            municipio=row.municipio,
-            id_legacy=row.salon_id,
-            dtype='Salon'
-
-        )
-        empresas.append(empresa)
-
-    empresaAgendazaAppRepository.saveAll(empresas)
-
-    return empresas
 async def ETLEmpresa():
     global salonLegacyRepository
     global empresaAgendazaAppRepository
