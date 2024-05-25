@@ -4,10 +4,9 @@ import pandas as pd
 from typing import List
 from ETL.gerservapp_legacy.Legacy import Legacy
 import traceback
+import copy
 
 import asyncio
-
-
 
 
 # Solo usarlo para probar que se hayan traído los datos desde la BD
@@ -40,6 +39,7 @@ async def columnasAuxiliares():
     empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa ADD COLUMN id_legacy INTEGER unique")
     cargoRepository.sqlNativeQuery("ALTER TABLE cargo ADD COLUMN es_legacy BOOLEAN")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon ADD COLUMN id_agendaza INTEGER unique")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_catering_id_legacy INTEGER")
 
 
 async def ETLUsuario():
@@ -66,14 +66,12 @@ async def ETLCliente():
 
     # Extraccion
     clienteLegacyList = clienteReserveappRepository.getAll()
-
     # TRANSFORMACION
     usuarioAgendazaList = transformacion(clienteLegacyList)
 
-    visualizar(usuarioAgendazaList)
-
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
+
 
 async def ETLEmpresa():
     global salonLegacyRepository
@@ -89,6 +87,7 @@ async def ETLEmpresa():
     salonLegacyRepository.saveAll(salones)
 
     return listaEmpresa
+
 
 async def cargoETL(empresalist):
     global geserveAppQueries
@@ -120,6 +119,27 @@ async def cargoETL(empresalist):
     cargoRepository.saveAll(cargos)
 
 
+async def extraVariableCateringETL(empresalist):
+    global extraRepository
+    global extraVariableCateringLegacyRepository
+
+    extraVariableCateringLegacyList = extraVariableCateringLegacyRepository.getAll()
+    extraList = transformacion(extraVariableCateringLegacyList)
+
+    finalList = []
+
+    empresaMigradaIdList = [item.id for item in empresalist]
+
+    for idItem in empresaMigradaIdList:
+        for extraItem in extraList:
+            extraItemCopy = copy.deepcopy(extraItem)
+            extraItemCopy.empresa_id = idItem
+            print(extraItemCopy)
+            finalList.append(extraItemCopy)
+
+    extraRepository.saveAll(finalList)
+
+
 #################################################################################################################
 '''
 A partir de aquí  comienza el script de migración 
@@ -137,6 +157,7 @@ async def main():
     await ETLCliente()
     empresa = await ETLEmpresa()
     await cargoETL(empresa)
+    await extraVariableCateringETL(empresa)
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -154,7 +175,7 @@ from ETL.agendaza.Cargo import Cargo
 from repositorio.Repository import Repositorio
 from repositorio.CargoRepository import CargoRepository
 from repositorio.SalonLegacyRepositorio import SalonLegacyRepositorio
-
+from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, ExtraRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -162,7 +183,11 @@ clienteReserveappRepository = ClienteLegacyRepository(conexionGeserveApp.session
 empresaGeserveAppRepository = EmpresaRepository(conexionGeserveApp.session)
 empresaAgendazaAppRepository = EmpresaRepository(conexionAgendaza.session)
 geserveAppQueries = Repositorio(conexionGeserveApp.session)  # Util cuando usamos nativeQuery
+agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos nativeQuery
+
 cargoRepository = CargoRepository(conexionAgendaza.session)
 salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
+extraVariableCateringLegacyRepository = ExtraVariableCateringLegacyRepository(conexionGeserveApp.session)
+extraRepository = ExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())

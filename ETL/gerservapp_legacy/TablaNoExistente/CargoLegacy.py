@@ -20,5 +20,3 @@ class CargoLegacy(conexionGeserveApp.Base, Legacy):
         self.empresa_id = empresa_id
 
 
-    def __repr__(self):
-        return f"<CargoLegacy(usuario_id={self.usuario_id}, id={self.id}, tipo_cargo={self.tipo_cargo}, empresa_id={self.empresa_id})>"
