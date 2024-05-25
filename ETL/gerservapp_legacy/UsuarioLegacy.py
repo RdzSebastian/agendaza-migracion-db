@@ -26,6 +26,7 @@ class UsuarioLegacy(conexionGeserveApp.Base, Legacy):
 
     usuarioAgendaza = None
 
+
     def __init__(self, nombre, apellido, mail, username, password, enabled):
         self.nombre = nombre
         self.apellido = apellido

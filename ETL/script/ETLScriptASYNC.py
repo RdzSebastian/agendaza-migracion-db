@@ -8,6 +8,8 @@ import traceback
 import asyncio
 
 
+
+
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -37,6 +39,7 @@ async def columnasAuxiliares():
     usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario ADD COLUMN id_agendaza INTEGER unique")
     empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa ADD COLUMN id_legacy INTEGER unique")
     cargoRepository.sqlNativeQuery("ALTER TABLE cargo ADD COLUMN es_legacy BOOLEAN")
+    geserveAppQueries.sqlNativeQuery("ALTER TABLE salon ADD COLUMN id_agendaza INTEGER unique")
 
 
 async def ETLUsuario():
@@ -73,15 +76,12 @@ async def ETLCliente():
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
 
 
-async def ETLEmpresa():
+async def ETLEmpresa2():
     global geserveAppQueries
     global empresaAgendazaAppRepository
     query = """
-    select Distinct s.id as salon_id , s.calle as calle , u.mail as email , s.municipio , s.nombre, s.numero 
-    from usuario u
-    join evento e on u.id = e.usuario_id
-    join salon s on s.id = e.salon_id 
-    where u.mail = 'miixeventos1@gmail.com';
+    select s.id as salon_id , s.calle as calle ,
+     'miixeventos1@gmail.com'  as email , s.municipio , s.nombre, s.numero  from salon s;
     """
 
     resultado = geserveAppQueries.sqlNativeQuery(query)
@@ -104,7 +104,20 @@ async def ETLEmpresa():
     empresaAgendazaAppRepository.saveAll(empresas)
 
     return empresas
+async def ETLEmpresa():
+    global salonLegacyRepository
+    global empresaAgendazaAppRepository
+    salones = salonLegacyRepository.getAll()
+    listaEmpresa = transformacion(salones)
 
+    empresaAgendazaAppRepository.saveAll(listaEmpresa)
+
+    for item in salones:
+        item.asignarIdAgendaza()
+
+    salonLegacyRepository.saveAll(salones)
+
+    return listaEmpresa
 
 async def cargoETL(empresalist):
     global geserveAppQueries
@@ -169,6 +182,8 @@ from ETL.agendaza.Empresa import Empresa
 from ETL.agendaza.Cargo import Cargo
 from repositorio.Repository import Repositorio
 from repositorio.CargoRepository import CargoRepository
+from repositorio.SalonLegacyRepositorio import SalonLegacyRepositorio
+
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -177,5 +192,6 @@ empresaGeserveAppRepository = EmpresaRepository(conexionGeserveApp.session)
 empresaAgendazaAppRepository = EmpresaRepository(conexionAgendaza.session)
 geserveAppQueries = Repositorio(conexionGeserveApp.session)  # Util cuando usamos nativeQuery
 cargoRepository = CargoRepository(conexionAgendaza.session)
+salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
 # Ejecutar el bucle principal
 asyncio.run(main())
