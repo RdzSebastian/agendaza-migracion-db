@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 
 from ETL.agendaza.Extra import Extra
-from ETL.gerservapp_legacy.ExtraVariableCatering import ExtraVariableCatering
+from ETL.gerservapp_legacy.ExtraLegacy import ExtraVariableCatering
 from repositorio.Repository import Repositorio
 
 
