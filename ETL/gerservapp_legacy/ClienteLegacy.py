@@ -13,10 +13,6 @@ class ClienteLegacy(conexionGeserveApp.Base, Legacy):
     id = Column(Integer, primary_key=True, autoincrement=True)
     nombre = Column(String)
     apellido = Column(String)
-    ## cuil = Column(BigInteger)
-    # fecha_nacimiento = Column(Date)
-    # empresa = Column(String)
-    # provincia = Column(String)
     email = Column(String)
     celular = Column(BigInteger)
 

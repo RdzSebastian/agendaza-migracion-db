@@ -27,7 +27,14 @@ try:
     usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_cliente_legacy IS NOT NULL")
 
     agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where extra_variable_catering_id_legacy IS NOT NULL")
+    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where EXTRA_SUB_TIPO_EVENTO_ID_LEGACY IS NOT NULL")
+    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where tipo_catering_id_legacy IS NOT NULL")
+    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where extra_variable_sub_tipo_evento_id_legacy IS NOT NULL")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS extra_variable_catering_id_legacy")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS EXTRA_SUB_TIPO_EVENTO_ID_LEGACY")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS tipo_catering_id_legacy")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN  IF EXISTS extra_variable_sub_tipo_evento_id_legacy")
+
     empresaAgendazaAppRepository.sqlNativeQuery("DELETE FROM empresa where id_legacy IS NOT NULL")
 
     usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
@@ -36,7 +43,6 @@ try:
     empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa DROP COLUMN IF EXISTS id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  CARGO DROP COLUMN   IF EXISTS es_legacy")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon DROP COLUMN IF EXISTS  id_agendaza")
-
 
     idUsuarioMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM usuario").scalar()
 

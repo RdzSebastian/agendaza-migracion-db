@@ -40,7 +40,12 @@ async def columnasAuxiliares():
     cargoRepository.sqlNativeQuery("ALTER TABLE cargo ADD COLUMN es_legacy BOOLEAN")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon ADD COLUMN id_agendaza INTEGER unique")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_catering_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN EXTRA_SUB_TIPO_EVENTO_ID_LEGACY INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN tipo_catering_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_sub_tipo_evento_id_legacy INTEGER")
 
+
+#
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -119,11 +124,10 @@ async def cargoETL(empresalist):
     cargoRepository.saveAll(cargos)
 
 
-async def extraVariableCateringETL(empresalist):
+async def extraVariableCateringETL(empresalist, extraLegacyRepository):
     global extraRepository
-    global extraVariableCateringLegacyRepository
 
-    extraVariableCateringLegacyList = extraVariableCateringLegacyRepository.getAll()
+    extraVariableCateringLegacyList = extraLegacyRepository.getAll()
     extraList = transformacion(extraVariableCateringLegacyList)
 
     finalList = []
@@ -134,7 +138,6 @@ async def extraVariableCateringETL(empresalist):
         for extraItem in extraList:
             extraItemCopy = copy.deepcopy(extraItem)
             extraItemCopy.empresa_id = idItem
-            print(extraItemCopy)
             finalList.append(extraItemCopy)
 
     extraRepository.saveAll(finalList)
@@ -157,8 +160,10 @@ async def main():
     await ETLCliente()
     empresa = await ETLEmpresa()
     await cargoETL(empresa)
-    await extraVariableCateringETL(empresa)
-
+    await extraVariableCateringETL(empresa, extraSubTipoEventoLegacyRepository)
+    await extraVariableCateringETL(empresa, extraVariableCateringLegacyRepository)
+    await extraVariableCateringETL(empresa, extraTipoCateringLegacy)
+    await extraVariableCateringETL(empresa, extraSubTipoCateringLegacyRepository)
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 
@@ -175,7 +180,8 @@ from ETL.agendaza.Cargo import Cargo
 from repositorio.Repository import Repositorio
 from repositorio.CargoRepository import CargoRepository
 from repositorio.SalonLegacyRepositorio import SalonLegacyRepositorio
-from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, ExtraRepository
+from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, ExtraRepository, \
+    ExtraSubTipoEventoLegacyRepository, ExtraSubTipoCateringLegacyRepository, ExtraVariableSubTipoEventoRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -188,6 +194,10 @@ agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos
 cargoRepository = CargoRepository(conexionAgendaza.session)
 salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
 extraVariableCateringLegacyRepository = ExtraVariableCateringLegacyRepository(conexionGeserveApp.session)
+extraSubTipoEventoLegacyRepository = ExtraSubTipoEventoLegacyRepository(conexionGeserveApp.session)
+extraTipoCateringLegacy = ExtraSubTipoCateringLegacyRepository(conexionGeserveApp.session)
+extraSubTipoCateringLegacyRepository = ExtraVariableSubTipoEventoRepository(conexionGeserveApp.session)
+
 extraRepository = ExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())

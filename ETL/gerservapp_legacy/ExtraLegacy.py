@@ -37,3 +37,33 @@ class ExtraVariableCatering(ExtraLegacy):
 
     def asignarIdLegacy(self):
         self.extraARetornar.extra_variable_catering_id_legacy = self.id
+
+
+class ExtraSubTipoEvento(ExtraLegacy):
+    __tablename__ = 'extra_sub_tipo_evento'
+
+    def tipoeExtra(self):
+        return 'EVENTO'
+
+    def asignarIdLegacy(self):
+        self.extraARetornar.extra_sub_tipo_evento_id_legacy = self.id
+
+
+class ExtraTipoCatering(ExtraLegacy):
+    __tablename__ = 'tipo_catering'
+
+    def tipoeExtra(self):
+        return 'TIPO_CATERING'
+
+    def asignarIdLegacy(self):
+        self.extraARetornar.tipo_catering_id_legacy = self.id
+
+
+class ExtraVariableSubTipoEvento(ExtraLegacy):
+    __tablename__ = 'extra_variable_sub_tipo_evento'
+
+    def tipoeExtra(self):
+        return 'VARIABLE_EVENTO'
+
+    def asignarIdLegacy(self):
+        self.extraARetornar.extra_variable_sub_tipo_evento_id_legacy = self.id
