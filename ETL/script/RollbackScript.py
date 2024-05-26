@@ -11,6 +11,23 @@ from repositorio.UsuarioRepository import UsuarioRepository
 from repositorio.ClienteRepository import ClienteLegacyRepository
 from repositorio.EmpresaRepository import EmpresaRepository
 
+
+class QueryDeleteyBase():
+    repositorio = None
+    query = None
+
+    def __init__(self, repositorio: Repositorio, query: str):
+        self.repositorio = repositorio
+        self.query = query
+
+    def borrarRegistros(self):
+
+        try:
+            self.repositorio.sqlNativeQuery(self.query)
+        except Exception as e:
+            print("No se puede descartar todos los cambios realizado por ETLScript debido a : ", e)
+
+
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
 clienteReseveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
@@ -22,25 +39,32 @@ repositorioList = [usuarioLegacyRepository, usuarioAgendazaRepository, clienteRe
 
 try:
 
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM CARGO where es_legacy IS TRUE")
-    usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_usuario_legacy IS NOT NULL")
-    usuarioAgendazaRepository.sqlNativeQuery("DELETE FROM usuario where id_cliente_legacy IS NOT NULL")
+    queryDeleteFromList = []
 
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where extra_variable_catering_id_legacy IS NOT NULL")
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where EXTRA_SUB_TIPO_EVENTO_ID_LEGACY IS NOT NULL")
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where tipo_catering_id_legacy IS NOT NULL")
-    agendazaAppQueries.sqlNativeQuery("DELETE FROM EXTRA where extra_variable_sub_tipo_evento_id_legacy IS NOT NULL")
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM CARGO where es_legacy IS TRUE"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM usuario where id_usuario_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM usuario where id_cliente_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EXTRA where extra_variable_catering_id_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EXTRA where tipo_catering_id_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EXTRA where EXTRA_SUB_TIPO_EVENTO_ID_LEGACY IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EXTRA where extra_variable_sub_tipo_evento_id_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM empresa where id_legacy IS NOT NULL"))
+
+    for item in queryDeleteFromList:
+        item.borrarRegistros()
+
+
+
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS extra_variable_catering_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS EXTRA_SUB_TIPO_EVENTO_ID_LEGACY")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS tipo_catering_id_legacy")
-    agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN  IF EXISTS extra_variable_sub_tipo_evento_id_legacy")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE  EXTRA DROP COLUMN  IF EXISTS extra_variable_sub_tipo_evento_id_legacy")
 
-    empresaAgendazaAppRepository.sqlNativeQuery("DELETE FROM empresa where id_legacy IS NOT NULL")
-
-    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
-    usuarioAgendazaRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_cliente_legacy")
-    usuarioLegacyRepository.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
-    empresaAgendazaAppRepository.sqlNativeQuery("ALTER TABLE empresa DROP COLUMN IF EXISTS id_legacy")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_usuario_legacy")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_cliente_legacy")
+    geserveAppQueries.sqlNativeQuery("ALTER TABLE usuario DROP COLUMN IF EXISTS id_agendaza")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE empresa DROP COLUMN IF EXISTS id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  CARGO DROP COLUMN   IF EXISTS es_legacy")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon DROP COLUMN IF EXISTS  id_agendaza")
 
@@ -64,6 +88,8 @@ try:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE cargo_id_seq RESTART WITH {idCargoMax}")
     else:
         print("No se pudo obtener el valor de idCargoMax. No se reinició la secuencia.")
+
+
 
 
 
