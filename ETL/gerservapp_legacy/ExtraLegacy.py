@@ -28,9 +28,24 @@ class ExtraLegacy(conexionGeserveApp.Base, Legacy):
         self.asignarIdLegacy()
         return self.extraARetornar
 
+    def listaPrecioFechas(self):
+
+        lista = self.obtenerPrecioFechas()
+        listaARetornar = []
+
+        for item in lista:
+            if item.precio != 0:
+                listaARetornar.append(item)
+
+        return listaARetornar
+
+    def obtenerPrecioFechas(self):
+        pass
+
 
 class ExtraVariableCatering(ExtraLegacy):
     __tablename__ = 'extra_variable_catering'
+    precio_fechas = relationship('PrecioConFechaExtraVariableCatering', backref='extra_variable_catering')
 
     def tipoeExtra(self):
         return 'VARIABLE_CATERING'
@@ -38,9 +53,13 @@ class ExtraVariableCatering(ExtraLegacy):
     def asignarIdLegacy(self):
         self.extraARetornar.extra_variable_catering_id_legacy = self.id
 
+    def obtenerPrecioFechas(self):
+        return self.precio_fechas
+
 
 class ExtraSubTipoEvento(ExtraLegacy):
     __tablename__ = 'extra_sub_tipo_evento'
+    precio_fechas = relationship('PrecioConFechaSubTipoEvento', backref='extra_sub_tipo_evento')
 
     def tipoeExtra(self):
         return 'EVENTO'
@@ -48,9 +67,13 @@ class ExtraSubTipoEvento(ExtraLegacy):
     def asignarIdLegacy(self):
         self.extraARetornar.extra_sub_tipo_evento_id_legacy = self.id
 
+    def obtenerPrecioFechas(self):
+        return self.precio_fechas
+
 
 class ExtraTipoCatering(ExtraLegacy):
     __tablename__ = 'tipo_catering'
+    precio_fechas = relationship('PrecioConFechaTipoCatering', backref='tipo_catering')
 
     def tipoeExtra(self):
         return 'TIPO_CATERING'
@@ -58,12 +81,19 @@ class ExtraTipoCatering(ExtraLegacy):
     def asignarIdLegacy(self):
         self.extraARetornar.tipo_catering_id_legacy = self.id
 
+    def obtenerPrecioFechas(self):
+        return self.precio_fechas
+
 
 class ExtraVariableSubTipoEvento(ExtraLegacy):
     __tablename__ = 'extra_variable_sub_tipo_evento'
+    precio_fechas = relationship('PrecioConFechaExtraVariableSubTipoEvento', backref='extra_variable_sub_tipo_evento')
 
     def tipoeExtra(self):
         return 'VARIABLE_EVENTO'
 
     def asignarIdLegacy(self):
         self.extraARetornar.extra_variable_sub_tipo_evento_id_legacy = self.id
+
+    def obtenerPrecioFechas(self):
+        return []

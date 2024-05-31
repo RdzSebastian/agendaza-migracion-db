@@ -127,7 +127,12 @@ async def cargoETL(empresalist):
 async def extraVariableCateringETL(empresalist, extraLegacyRepository):
     global extraRepository
 
+    print("CASO CASO CASOC ACAACASC")
     extraVariableCateringLegacyList = extraLegacyRepository.getAll()
+
+    for items in extraVariableCateringLegacyList:
+        visualizar(items.listaPrecioFechas())
+
     extraList = transformacion(extraVariableCateringLegacyList)
 
     finalList = []
