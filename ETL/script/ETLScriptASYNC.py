@@ -147,11 +147,19 @@ async def extraETL(empresalist, extraLegacyRepository):
 
 
 async def precioConFechaExtraETL(extraLegacyList, empresalist):
+
+    precioConFechaList = []
     empresa_id_id_legacy = {}
     for item in empresalist:
         empresa_id_id_legacy[item.id] = item.id_legacy
 
-    print(empresa_id_id_legacy)
+    for extraLegacy in extraLegacyList:
+        for precio in extraLegacy.listaPrecioFechas():
+            precioConFechaList.append(precio)
+
+    visualizar(precioConFechaList)
+
+
 
 
 
