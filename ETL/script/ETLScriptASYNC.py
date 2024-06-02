@@ -127,10 +127,9 @@ async def cargoETL(empresalist):
 async def extraETL(empresalist, extraLegacyRepository):
     global extraRepository
 
-    extraVariableCateringLegacyList = extraLegacyRepository.getAll()
+    extraLegacyList = extraLegacyRepository.getAll()
 
-
-    extraList = transformacion(extraVariableCateringLegacyList)
+    extraList = transformacion(extraLegacyList)
 
     finalList = []
 
@@ -143,6 +142,17 @@ async def extraETL(empresalist, extraLegacyRepository):
             finalList.append(extraItemCopy)
 
     extraRepository.saveAll(finalList)
+
+    await precioConFechaExtraETL(extraLegacyList, empresalist)
+
+
+async def precioConFechaExtraETL(extraLegacyList, empresalist):
+    empresa_id_id_legacy = {}
+    for item in empresalist:
+        empresa_id_id_legacy[item.id] = item.id_legacy
+
+    print(empresa_id_id_legacy)
+
 
 
 #################################################################################################################
