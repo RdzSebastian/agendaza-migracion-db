@@ -96,4 +96,4 @@ class ExtraVariableSubTipoEvento(ExtraLegacy):
         self.extraARetornar.extra_variable_sub_tipo_evento_id_legacy = self.id
 
     def obtenerPrecioFechas(self):
-        return []
+        return self.precio_fechas

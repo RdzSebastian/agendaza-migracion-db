@@ -124,14 +124,11 @@ async def cargoETL(empresalist):
     cargoRepository.saveAll(cargos)
 
 
-async def extraVariableCateringETL(empresalist, extraLegacyRepository):
+async def extraETL(empresalist, extraLegacyRepository):
     global extraRepository
 
-    print("CASO CASO CASOC ACAACASC")
     extraVariableCateringLegacyList = extraLegacyRepository.getAll()
 
-    for items in extraVariableCateringLegacyList:
-        visualizar(items.listaPrecioFechas())
 
     extraList = transformacion(extraVariableCateringLegacyList)
 
@@ -165,10 +162,10 @@ async def main():
     await ETLCliente()
     empresa = await ETLEmpresa()
     await cargoETL(empresa)
-    await extraVariableCateringETL(empresa, extraSubTipoEventoLegacyRepository)
-    await extraVariableCateringETL(empresa, extraVariableCateringLegacyRepository)
-    await extraVariableCateringETL(empresa, extraTipoCateringLegacy)
-    await extraVariableCateringETL(empresa, extraSubTipoCateringLegacyRepository)
+    await extraETL(empresa, extraSubTipoEventoLegacyRepository)
+    await extraETL(empresa, extraVariableCateringLegacyRepository)
+    await extraETL(empresa, extraTipoCateringLegacy)
+    await extraETL(empresa, extraVariableSubTipoEventoRepository)
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 
@@ -201,7 +198,7 @@ salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
 extraVariableCateringLegacyRepository = ExtraVariableCateringLegacyRepository(conexionGeserveApp.session)
 extraSubTipoEventoLegacyRepository = ExtraSubTipoEventoLegacyRepository(conexionGeserveApp.session)
 extraTipoCateringLegacy = ExtraSubTipoCateringLegacyRepository(conexionGeserveApp.session)
-extraSubTipoCateringLegacyRepository = ExtraVariableSubTipoEventoRepository(conexionGeserveApp.session)
+extraVariableSubTipoEventoRepository = ExtraVariableSubTipoEventoRepository(conexionGeserveApp.session)
 
 extraRepository = ExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
