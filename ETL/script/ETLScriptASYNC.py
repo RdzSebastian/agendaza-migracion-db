@@ -180,10 +180,10 @@ async def main():
     await ETLCliente()
     empresa = await ETLEmpresa()
     await cargoETL(empresa)
-    await extraETL(empresa, extraSubTipoEventoLegacyRepository)
-    await extraETL(empresa, extraVariableCateringLegacyRepository)
-    await extraETL(empresa, extraTipoCateringLegacy)
-    await extraETL(empresa, extraVariableSubTipoEventoRepository)
+    #await extraETL(empresa, extraSubTipoEventoLegacyRepository)
+    #await extraETL(empresa, extraVariableCateringLegacyRepository)
+    #await extraETL(empresa, extraTipoCateringLegacy)
+    #await extraETL(empresa, extraVariableSubTipoEventoRepository)
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 
@@ -221,3 +221,24 @@ extraVariableSubTipoEventoRepository = ExtraVariableSubTipoEventoRepository(cone
 extraRepository = ExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())
+
+
+"""
+query para variable catering
+
+select distinct ev.id, ev.nombre , 'TIPO_CATERING' as tipoExtra , s.id as empresa_id from extra_variable_catering ev
+	join catering_extra_variable_catering cevc 
+		on  ev.id = cevc.extra_variable_catering_id
+	join catering c
+		on c.id = cevc.id
+	join evento e 
+		on e.catering_id = c.id
+	join salon s 
+		on s.id = e.salon_id
+		
+		
+		
+		
+
+
+"""
