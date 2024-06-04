@@ -224,21 +224,22 @@ asyncio.run(main())
 
 
 """
-query para variable catering
-
-select distinct ev.id, ev.nombre , 'TIPO_CATERING' as tipoExtra , s.id as empresa_id from extra_variable_catering ev
-	join catering_extra_variable_catering cevc 
-		on  ev.id = cevc.extra_variable_catering_id
-	join catering c
-		on c.id = cevc.id
-	join evento e 
-		on e.catering_id = c.id
-	join salon s 
-		on s.id = e.salon_id
-		
-		
-		
-		
+select distinct etc.id ,etc.nombre  , 'VARIABLE_CATERING' as tipoExtra , extra.salon_id as empresa_id 
+	from extra_variable_catering etc 
+	join precio_con_fecha_extra_variable_catering extra 
+	on etc.id = extra_variable_catering_id;
 
 
+select distinct este.id ,este.nombre  , 'EVENTO' as tipoExtra  , extra.salon_id as empresa_id from extra_sub_tipo_evento este 
+	join precio_con_fecha_extra_sub_tipo_evento extra  on este.id = extra.extra_sub_tipo_evento_id ;
+	
+	
+select distinct este.id ,este.nombre  , 'TIPO_CATERING' as tipoExtra  , extra.salon_id as empresa_id
+	from tipo_catering este 
+	join precio_con_fecha_tipo_catering extra  on este.id = extra.tipo_catering_id ;
+	
+select distinct este.id ,este.nombre  , 'VARIABLE_EVENTO' as tipoExtra  , extra.salon_id as empresa_id
+	from extra_variable_sub_tipo_evento este 
+	join precio_con_fecha_extra_variable_sub_tipo_evento extra  on este.id = extra.extra_variable_sub_tipo_evento_id;
+		
 """
