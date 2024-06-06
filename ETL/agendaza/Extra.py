@@ -16,6 +16,6 @@ class Extra(conexionAgendaza.Base):
     tipo_catering_id_legacy = Column(Integer)
     extra_variable_sub_tipo_evento_id_legacy = Column(Integer)
 
-    def __init__(self, nombre=None, tipo_extra=None):
+    def __init__(self, nombre, tipo_extra):
         self.nombre = nombre
         self.tipo_extra = tipo_extra
