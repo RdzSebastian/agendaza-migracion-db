@@ -12,6 +12,10 @@ class PrecioConFechaExtra(conexionAgendaza.Base):
     precio = Column(Integer)
     empresa_id = Column(Integer)
     extra_id = Column(Integer)
+    extra_variable_catering_legacy = Column(Integer)
+    extra_variable_sub_tipo_evento_legacy = Column(Integer)
+    extra_sub_tipo_evento_legacy = Column(Integer)
+    extra_tipo_catering_legacy = Column(Integer)
 
     def __init__(self, desde, fecha_baja, hasta, precio,empresa_id,extra_id):
         self.desde = desde

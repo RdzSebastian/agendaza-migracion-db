@@ -48,8 +48,15 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN tipo_catering_id_legacy INTEGER")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_sub_tipo_evento_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_catering_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_sub_tipo_evento_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_sub_tipo_evento_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_tipo_catering_legacy INTEGER")
 
-#
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -171,32 +178,19 @@ async def extraETL2(query, foreignLegacyVsNewAux, tipo):
 
 async def precioConFechaExtraETL2(repository, tipo):
     global foreignLegacyVsNewAux
+    global precioConFechaExtraRepository
     precioConHoraLegacy = repository.getAll()
 
-    precioConHoraAgendaza = []
+    precioConHoraAgendazaList = []
 
     for precioConHora in precioConHoraLegacy:
         empresa_id, extra_id = foreignLegacyVsNewAux.obtenerFKS(precioConHora.salon_id, precioConHora.idLegacy(), tipo)
         precioConHora.empresa_id = empresa_id
         precioConHora.extra_id = extra_id
-        precioConFechaHora = precioConHora.conversion()
-        precioConHoraAgendaza.append(precioConFechaHora)
+        precioConFechaHoraAgendaza = precioConHora.conversion()
+        precioConHoraAgendazaList.append(precioConFechaHoraAgendaza)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    precioConFechaExtraRepository.saveAll(precioConHoraAgendazaList)
 
 
 async def definirQueIdSetear(extra, id):
@@ -288,10 +282,11 @@ async def main():
     await extraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
-    await precioConFechaExtraETL2(precioConFechaExtraVariableCateringRepository,"VARIABLE_CATERING")
-    #await precioConFechaExtraETL2(precioConFechaExtraSubTipoEventoRepository)
-    #await precioConFechaExtraETL2(precioConFechaExtraTipoCateringRepository)
-    #await precioConFechaExtraETL2(precioConFechaExtraVariableEventoRepository)
+
+    await precioConFechaExtraETL2(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
+    await precioConFechaExtraETL2(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
+    await precioConFechaExtraETL2(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
+    await precioConFechaExtraETL2(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -315,7 +310,7 @@ from ETL.agendaza.Extra import Extra
 
 from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariableCateringRepository, \
     PrecioConFechaExtraSubTipoEventoRepository, PrecioConFechaExtraTipoCateringRepository, \
-    PrecioConFechaExtraVariableEventoRepository
+    PrecioConFechaExtraVariableEventoRepository, PrecioConFechaExtraRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -339,5 +334,6 @@ precioConFechaExtraVariableCateringRepository = PrecioConFechaExtraVariableCater
 precioConFechaExtraSubTipoEventoRepository = PrecioConFechaExtraSubTipoEventoRepository(conexionGeserveApp.session)
 precioConFechaExtraTipoCateringRepository = PrecioConFechaExtraTipoCateringRepository(conexionGeserveApp.session)
 precioConFechaExtraVariableEventoRepository = PrecioConFechaExtraVariableEventoRepository(conexionGeserveApp.session)
+precioConFechaExtraRepository = PrecioConFechaExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())

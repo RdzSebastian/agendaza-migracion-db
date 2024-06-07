@@ -13,7 +13,21 @@ class ForeignLegacyVsNewAux:
     def obtenerFKS(self, empresa_id_legacy, extra_id_legacy, tipo):
         empresa_id_retorno = None
         extra_id_retorno = None
-        for item in self.variableCateringVsAExtraAgendazaList:
+        listaARecorrer = None
+
+        if tipo == "VARIABLE_CATERING":
+            listaARecorrer = self.variableCateringVsAExtraAgendazaList
+
+        if tipo == "EVENTO":
+            listaARecorrer = self.subTipoEventoVsAExtraAgendazaList
+
+        if tipo == "TIPO_CATERING":
+            listaARecorrer = self.tipoCateringVsExtraAgendazaList
+
+        if tipo == "VARIABLE_EVENTO":
+            listaARecorrer = self.variableEventoVsAExtraAgendaList
+
+        for item in listaARecorrer:
             if item.cumpleParaPrecioExtra(empresa_id_legacy, extra_id_legacy):
                 empresa_id_retorno = item.id_empresa
                 extra_id_retorno = item.id_agendaza

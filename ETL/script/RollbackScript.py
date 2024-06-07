@@ -45,6 +45,14 @@ try:
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM usuario where id_usuario_legacy IS NOT NULL"))
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM usuario where id_cliente_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries,
+                                                "DELETE FROM precio_con_fecha_extra WHERE  extra_variable_catering_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries,
+                                                "DELETE FROM precio_con_fecha_extra WHERE  extra_variable_sub_tipo_evento_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries,
+                                                "DELETE FROM precio_con_fecha_extra WHERE  extra_sub_tipo_evento_legacy IS NOT NULL"))
+    queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries,
+                                                "DELETE FROM precio_con_fecha_extra WHERE  extra_tipo_catering_legacy IS NOT NULL"))
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EXTRA where extra_variable_catering_id_legacy IS NOT NULL"))
     queryDeleteFromList.append(
@@ -55,8 +63,18 @@ try:
                                                 "DELETE FROM EXTRA where extra_variable_sub_tipo_evento_id_legacy IS NOT NULL"))
     queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM empresa where id_legacy IS NOT NULL"))
 
+
     for item in queryDeleteFromList:
         item.borrarRegistros()
+
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE  precio_con_fecha_extra DROP COLUMN   IF EXISTS extra_variable_catering_legacy")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE  precio_con_fecha_extra DROP COLUMN   IF EXISTS extra_variable_sub_tipo_evento_legacy")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE  precio_con_fecha_extra DROP COLUMN   IF EXISTS extra_sub_tipo_evento_legacy")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE  precio_con_fecha_extra DROP COLUMN   IF EXISTS extra_tipo_catering_legacy")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS extra_variable_catering_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  EXTRA DROP COLUMN   IF EXISTS EXTRA_SUB_TIPO_EVENTO_ID_LEGACY")
