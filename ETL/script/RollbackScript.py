@@ -80,17 +80,26 @@ try:
 
     idEmpresaMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM empresa").scalar()
 
-    if idUsuarioMax is not None:
+    if idEmpresaMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE empresa_id_seq RESTART WITH {idEmpresaMax}")
     else:
         print("No se pudo obtener el valor de idEmpresaMax. No se reinició la secuencia.")
 
     idCargoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM CARGO").scalar()
 
-    if idUsuarioMax is not None:
+    if idCargoMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE cargo_id_seq RESTART WITH {idCargoMax}")
     else:
         print("No se pudo obtener el valor de idCargoMax. No se reinició la secuencia.")
+
+    idExtraMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM EXTRA").scalar()
+
+
+    if idExtraMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE extra_id_seq RESTART WITH {idExtraMax}")
+    else:
+        print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
+
 
 
 except Exception as e:

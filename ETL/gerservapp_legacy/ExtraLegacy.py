@@ -45,7 +45,6 @@ class ExtraLegacy(conexionGeserveApp.Base, Legacy):
 
 class ExtraVariableCatering(ExtraLegacy):
     __tablename__ = 'extra_variable_catering'
-    precio_fechas = relationship('PrecioConFechaExtraVariableCatering', backref='extra_variable_catering')
 
     def tipoeExtra(self):
         return 'VARIABLE_CATERING'
@@ -59,7 +58,6 @@ class ExtraVariableCatering(ExtraLegacy):
 
 class ExtraSubTipoEvento(ExtraLegacy):
     __tablename__ = 'extra_sub_tipo_evento'
-    precio_fechas = relationship('PrecioConFechaSubTipoEvento', backref='extra_sub_tipo_evento')
 
     def tipoeExtra(self):
         return 'EVENTO'
@@ -73,7 +71,6 @@ class ExtraSubTipoEvento(ExtraLegacy):
 
 class ExtraTipoCatering(ExtraLegacy):
     __tablename__ = 'tipo_catering'
-    precio_fechas = relationship('PrecioConFechaTipoCatering', backref='tipo_catering')
 
     def tipoeExtra(self):
         return 'TIPO_CATERING'
@@ -87,7 +84,6 @@ class ExtraTipoCatering(ExtraLegacy):
 
 class ExtraVariableSubTipoEvento(ExtraLegacy):
     __tablename__ = 'extra_variable_sub_tipo_evento'
-    precio_fechas = relationship('PrecioConFechaExtraVariableSubTipoEvento', backref='extra_variable_sub_tipo_evento')
 
     def tipoeExtra(self):
         return 'VARIABLE_EVENTO'

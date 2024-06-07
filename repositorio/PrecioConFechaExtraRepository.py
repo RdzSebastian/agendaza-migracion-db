@@ -8,3 +8,8 @@ from ETL.agendaza.Empresa import Empresa
 class PrecioConFechaExtraRepository(Repositorio[PrecioConFechaExtra]):
     def __init__(self, session: sessionmaker):
         super().__init__(session)
+
+
+class PrecioConFechaExtraVariableCateringRepository(Repositorio[PrecioConFechaExtra]):
+    def __init__(self, session: sessionmaker):
+        super().__init__(session)
