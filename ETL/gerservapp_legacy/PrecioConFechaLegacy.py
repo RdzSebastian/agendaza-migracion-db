@@ -4,6 +4,7 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from ETL.Conexión import conexionGeserveApp
 from ETL.agendaza.Extra import Extra
+from ETL.agendaza.PrecioConFechaExtra import PrecioConFechaExtra
 from ETL.gerservapp_legacy.Legacy import Legacy
 from ETL.agendaza.Usuario import Usuario
 
@@ -14,6 +15,24 @@ class PrecioConFechaLegacy(conexionGeserveApp.Base, Legacy):
     precio = Column(Integer)
     desde = Column(Date)
     hasta = Column(Date)
+    salon_id = Column(Integer)
+    empresaDic = {}
+
+    def __init__(self, precio, desde, hasta, salon_id):
+        self.precio = precio
+        self.desde = desde
+        self.hasta = hasta
+        self.salon_id = salon_id
+
+    def conversion(self):
+        precioConFechaExtra = PrecioConFechaExtra(
+            desde=self.desde,
+            fecha_baja=None,
+            hasta=self.hasta,
+            precio=self.precio,
+            empresa_id=self.empresaDic.get(self.salon_id),
+            extra_id=None
+        )
 
 
 class PrecioConFechaTipoCatering(PrecioConFechaLegacy):

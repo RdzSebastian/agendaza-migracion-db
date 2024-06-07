@@ -3,7 +3,8 @@ from ETL.Conexión import conexionGeserveApp
 import pandas as pd
 from typing import List
 
-
+from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
+from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.gerservapp_legacy.Legacy import Legacy
 import traceback
 import copy
@@ -100,18 +101,9 @@ async def cargoETL(empresalist):
     global geserveAppQueries
     global cargoRepository
     list = empresalist
+    global nativeQuerys
 
-    query = """
-    SELECT u.id_Agendaza AS usuario_id, r.id, r.nombre AS tipo_cargo, s.id AS empresa_id
-    FROM usuario u
-    JOIN rol r ON u.rol_id = r.id
-    JOIN evento e ON u.id = e.usuario_id
-    JOIN salon s ON s.id = e.salon_id
-    GROUP BY u.id, r.id, s.id
-    ORDER BY usuario_id;
-    """
-
-    resultado = geserveAppQueries.sqlNativeQuery(query)
+    resultado = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCargoETL)
     cargos = []
 
     for row in resultado:
@@ -161,21 +153,13 @@ async def precioConFechaExtraETL(extraLegacyList, empresalist):
     visualizar(precioConFechaList)
 
 
-async def precioConFechaExtraETL2(query, empresaList, tipo):
+async def precioConFechaExtraETL2(query, foreignLegacyVsNewAux, tipo):
     global extraRepository
     extraList = geserveAppQueries.sqlNativeQuery(query)
-    empresa_id_id_legacy = {}
-
-
-
+    empresa_id_id_legacy = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id
     extraReturn = []
 
-    for item in empresaList:
-        empresa_id_id_legacy[item.id_legacy] = item.id
-
-
     for row in extraList:
-
         extra = Extra(nombre=row.nombre, tipo_extra=tipo)
         extra.empresa_id = empresa_id_id_legacy.get(row.empresa_id)
         await definirQueIdSetear(extra, row.id)
@@ -188,7 +172,7 @@ async def definirQueIdSetear(extra, id):
     if extra.tipo_extra == "VARIABLE_CATERING":
         extra.extra_variable_catering_id_legacy = id
 
-    if extra.tipo_extra == "EVENTO" :
+    if extra.tipo_extra == "EVENTO":
         extra.extra_sub_tipo_evento_id_legacy = id
 
     if extra.tipo_extra == "TIPO_CATERING":
@@ -206,46 +190,25 @@ async def main():
     global clienteReserveappRepository
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
 
     await columnasAuxiliares()
     await ETLUsuario()
     await ETLCliente()
-    empresa = await ETLEmpresa()
-    await cargoETL(empresa)
+    listaEmpresa = await ETLEmpresa()
+    await cargoETL(listaEmpresa)
+    foreignLegacyVsNewAux.setEmpresaIds(listaEmpresa)
 
-    #await extraETL(empresa, extraSubTipoEventoLegacyRepository)
-    #await extraETL(empresa, extraVariableCateringLegacyRepository)
-    #await extraETL(empresa, extraTipoCateringLegacy)
+    # await extraETL(empresa, extraSubTipoEventoLegacyRepository)
+    # await extraETL(empresa, extraVariableCateringLegacyRepository)
+    # await extraETL(empresa, extraTipoCateringLegacy)
     # await extraETL(empresa, extraVariableSubTipoEventoRepository)
 
-    queryVARIABLE_CATERING = """select distinct etc.id as id ,etc.nombre as nombre , 'VARIABLE_CATERING' as tipoExtra , extra.salon_id as empresa_id 
-	from extra_variable_catering etc 
-	join precio_con_fecha_extra_variable_catering extra 
-	on etc.id = extra_variable_catering_id;"""
-
-    queryEvento = """ 
-    select distinct este.id as id,este.nombre as nombre  , extra.salon_id as empresa_id from extra_sub_tipo_evento este 
-	join precio_con_fecha_extra_sub_tipo_evento extra  on este.id = extra.extra_sub_tipo_evento_id ;
-    """
-
-    queryTipoCatering = """
-    select distinct este.id as id ,este.nombre as nombre  , extra.salon_id as empresa_id
-	from tipo_catering este 
-	join precio_con_fecha_tipo_catering extra  on este.id = extra.tipo_catering_id ; 
-    """
-
-    queryVariable_Evento = """  	
-    select distinct este.id as id ,este.nombre  as nombre , extra.salon_id as empresa_id
-	from extra_variable_sub_tipo_evento este 
-	join precio_con_fecha_extra_variable_sub_tipo_evento extra  on este.id = extra.extra_variable_sub_tipo_evento_id; 
-    """
-
-
-
-    await precioConFechaExtraETL2(queryVARIABLE_CATERING, empresa ,"VARIABLE_CATERING")
-    await precioConFechaExtraETL2(queryEvento, empresa, "EVENTO")
-    await precioConFechaExtraETL2(queryTipoCatering, empresa, "TIPO_CATERING")
-    await precioConFechaExtraETL2(queryVariable_Evento, empresa, "VARIABLE_EVENTO")
+    await precioConFechaExtraETL2(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
+    await precioConFechaExtraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
+    await precioConFechaExtraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
+    await precioConFechaExtraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -267,7 +230,6 @@ from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, E
     ExtraSubTipoEventoLegacyRepository, ExtraSubTipoCateringLegacyRepository, ExtraVariableSubTipoEventoRepository
 from ETL.agendaza.Extra import Extra
 
-
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
 clienteReserveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
@@ -282,8 +244,8 @@ extraVariableCateringLegacyRepository = ExtraVariableCateringLegacyRepository(co
 extraSubTipoEventoLegacyRepository = ExtraSubTipoEventoLegacyRepository(conexionGeserveApp.session)
 extraTipoCateringLegacy = ExtraSubTipoCateringLegacyRepository(conexionGeserveApp.session)
 extraVariableSubTipoEventoRepository = ExtraVariableSubTipoEventoRepository(conexionGeserveApp.session)
-
+nativeQuerys = NativeQuerys()
+foreignLegacyVsNewAux = ForeignLegacyVsNewAux()
 extraRepository = ExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())
-
