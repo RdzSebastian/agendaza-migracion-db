@@ -10,3 +10,5 @@ class ExtraGeserveAppVsExtraAgendaza:
         self.id_empresa = id_empresa
         self.id_empresa_legacy = id_empresa_legacy
 
+    def cumpleParaPrecioExtra(self, empresa_legacy_id , id_legacy):
+        return self.id_empresa_legacy == empresa_legacy_id and  self.id_legacy == id_legacy

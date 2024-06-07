@@ -13,7 +13,7 @@ class PrecioConFechaExtra(conexionAgendaza.Base):
     empresa_id = Column(Integer)
     extra_id = Column(Integer)
 
-    def __init__(self, desde, fecha_baja, hasta, precio, empresa_id, extra_id):
+    def __init__(self, desde, fecha_baja, hasta, precio,empresa_id,extra_id):
         self.desde = desde
         self.fecha_baja = fecha_baja
         self.hasta = hasta

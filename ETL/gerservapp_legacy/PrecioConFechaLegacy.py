@@ -16,7 +16,9 @@ class PrecioConFechaLegacy(conexionGeserveApp.Base, Legacy):
     desde = Column(Date)
     hasta = Column(Date)
     salon_id = Column(Integer)
-    empresaDic = {}
+
+    empresa_id = None
+    extra_id = None
 
     def __init__(self, precio, desde, hasta, salon_id):
         self.precio = precio
@@ -30,8 +32,8 @@ class PrecioConFechaLegacy(conexionGeserveApp.Base, Legacy):
             fecha_baja=None,
             hasta=self.hasta,
             precio=self.precio,
-            empresa_id=self.empresaDic.get(self.salon_id),
-            extra_id=None
+            empresa_id=self.empresa_id,
+            extra_id=self.extra_id
         )
 
 
@@ -39,17 +41,29 @@ class PrecioConFechaTipoCatering(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_tipo_catering'
     tipo_catering_id = Column(Integer)
 
+    def idLegacy(self):
+        return self.tipo_catering_id
+
 
 class PrecioConFechaSubTipoEvento(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_sub_tipo_evento'
     extra_sub_tipo_evento_id = Column(Integer)
+
+    def idLegacy(self):
+        return self.extra_sub_tipo_evento_id
 
 
 class PrecioConFechaExtraVariableCatering(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_variable_catering'
     extra_variable_catering_id = Column(Integer)
 
+    def idLegacy(self):
+        return self.extra_variable_catering_id
+
 
 class PrecioConFechaExtraVariableSubTipoEvento(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_variable_sub_tipo_evento'
     extra_variable_sub_tipo_evento_id = Column(Integer)
+
+    def idLegacy(self):
+        return self.extra_variable_sub_tipo_evento_id
