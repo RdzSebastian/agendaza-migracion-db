@@ -5,6 +5,7 @@ from typing import List
 
 from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
+from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 from ETL.gerservapp_legacy.Legacy import Legacy
 import traceback
 import copy
@@ -164,8 +165,8 @@ async def precioConFechaExtraETL2(query, foreignLegacyVsNewAux, tipo):
         extra.empresa_id = empresa_id_id_legacy.get(row.empresa_id)
         await definirQueIdSetear(extra, row.id)
         extraReturn.append(extra)
-
-    extraRepository.saveAll(extraReturn)
+        extraRepository.save(extra)
+        await setNewforeignLegacyVsNewAux(extra, row.id)
 
 
 async def definirQueIdSetear(extra, id):
@@ -180,6 +181,30 @@ async def definirQueIdSetear(extra, id):
 
     if extra.tipo_extra == "VARIABLE_EVENTO":
         extra.extra_variable_sub_tipo_evento_id_legacy = id
+
+
+async def setNewforeignLegacyVsNewAux(extra, idLegacy):
+    global foreignLegacyVsNewAux
+    if extra.tipo_extra == "VARIABLE_CATERING":
+
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
+        print("VARIABLE_CATERING - Id_agendaza",idVsIdLegacy.id_agendaza ,"id_legacy",idVsIdLegacy.id_legacy)
+
+    if extra.tipo_extra == "EVENTO":
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        foreignLegacyVsNewAux.subTipoEventoVsAExtraAgendazaList.append(idVsIdLegacy)
+        print("EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
+
+    if extra.tipo_extra == "TIPO_CATERING":
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        foreignLegacyVsNewAux.tipoCateringVsExtraAgendazaList.append(idVsIdLegacy)
+        print("TIPO_CATERING - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
+
+    if extra.tipo_extra == "VARIABLE_EVENTO":
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
+        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
 
 
 #################################################################################################################
