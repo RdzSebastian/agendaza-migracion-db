@@ -94,7 +94,6 @@ try:
 
     idExtraMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM EXTRA").scalar()
 
-
     if idExtraMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE extra_id_seq RESTART WITH {idExtraMax}")
     else:

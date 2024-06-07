@@ -37,19 +37,19 @@ class PrecioConFechaLegacy(conexionGeserveApp.Base, Legacy):
 
 class PrecioConFechaTipoCatering(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_tipo_catering'
-    tipo_catering_id = Column(Integer, ForeignKey('tipo_catering.id'))
+    tipo_catering_id = Column(Integer)
 
 
 class PrecioConFechaSubTipoEvento(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_sub_tipo_evento'
-    extra_sub_tipo_evento_id = Column(Integer, ForeignKey('extra_sub_tipo_evento.id'))
+    extra_sub_tipo_evento_id = Column(Integer)
 
 
 class PrecioConFechaExtraVariableCatering(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_variable_catering'
-    extra_variable_catering_id = Column(Integer, ForeignKey('extra_variable_catering.id'))
+    extra_variable_catering_id = Column(Integer)
 
 
 class PrecioConFechaExtraVariableSubTipoEvento(PrecioConFechaLegacy):
     __tablename__ = 'precio_con_fecha_extra_variable_sub_tipo_evento'
-    extra_variable_sub_tipo_evento_id = Column(Integer, ForeignKey('extra_variable_sub_tipo_evento.id'))
+    extra_variable_sub_tipo_evento_id = Column(Integer)
