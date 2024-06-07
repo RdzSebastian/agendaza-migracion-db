@@ -154,7 +154,7 @@ async def precioConFechaExtraETL(extraLegacyList, empresalist):
     visualizar(precioConFechaList)
 
 
-async def precioConFechaExtraETL2(query, foreignLegacyVsNewAux, tipo):
+async def extraETL2(query, foreignLegacyVsNewAux, tipo):
     global extraRepository
     extraList = geserveAppQueries.sqlNativeQuery(query)
     empresa_id_id_legacy = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id
@@ -166,7 +166,7 @@ async def precioConFechaExtraETL2(query, foreignLegacyVsNewAux, tipo):
         await definirQueIdSetear(extra, row.id)
         extraReturn.append(extra)
         extraRepository.save(extra)
-        await setNewforeignLegacyVsNewAux(extra, row.id)
+        await setNewforeignLegacyVsNewAux(extra, row.id ,row.empresa_id )
 
 
 async def definirQueIdSetear(extra, id):
@@ -183,28 +183,49 @@ async def definirQueIdSetear(extra, id):
         extra.extra_variable_sub_tipo_evento_id_legacy = id
 
 
-async def setNewforeignLegacyVsNewAux(extra, idLegacy):
+async def setNewforeignLegacyVsNewAux(extra, idLegacy ,empresaLegacyId):
     global foreignLegacyVsNewAux
+    idVsIdLegacy = None
     if extra.tipo_extra == "VARIABLE_CATERING":
 
-        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy ,
+                                                      id_empresa = extra.empresa_id,
+                                                      id_empresa_legacy=empresaLegacyId
+                                                      )
+
         foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
-        print("VARIABLE_CATERING - Id_agendaza",idVsIdLegacy.id_agendaza ,"id_legacy",idVsIdLegacy.id_legacy)
+        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
+              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "EVENTO":
-        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
+                                                      id_empresa=extra.empresa_id,
+                                                      id_empresa_legacy=empresaLegacyId
+                                                      )
+
         foreignLegacyVsNewAux.subTipoEventoVsAExtraAgendazaList.append(idVsIdLegacy)
-        print("EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
+        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
+              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "TIPO_CATERING":
-        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
+                                                      id_empresa=extra.empresa_id,
+                                                      id_empresa_legacy=empresaLegacyId
+                                                      )
+
         foreignLegacyVsNewAux.tipoCateringVsExtraAgendazaList.append(idVsIdLegacy)
-        print("TIPO_CATERING - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
+        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
+              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "VARIABLE_EVENTO":
-        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy)
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
+                                                      id_empresa=extra.empresa_id,
+                                                      id_empresa_legacy=empresaLegacyId
+                                                      )
+
         foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
-        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy)
+        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
+              "empresa_id_agendaza",extra.empresa_id,"empresa_id_legacy",empresaLegacyId)
 
 
 #################################################################################################################
@@ -230,10 +251,10 @@ async def main():
     # await extraETL(empresa, extraTipoCateringLegacy)
     # await extraETL(empresa, extraVariableSubTipoEventoRepository)
 
-    await precioConFechaExtraETL2(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
-    await precioConFechaExtraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
-    await precioConFechaExtraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
-    await precioConFechaExtraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
+    await extraETL2(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
+    await extraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
+    await extraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
+    await extraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
