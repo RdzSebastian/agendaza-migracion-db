@@ -166,7 +166,14 @@ async def extraETL2(query, foreignLegacyVsNewAux, tipo):
         await definirQueIdSetear(extra, row.id)
         extraReturn.append(extra)
         extraRepository.save(extra)
-        await setNewforeignLegacyVsNewAux(extra, row.id ,row.empresa_id )
+        await setNewforeignLegacyVsNewAux(extra, row.id, row.empresa_id)
+
+
+async def precioConFechaExtraETL2(repository):
+    precioConHoraLegacy = repository.getAll()
+
+    visualizar(precioConHoraLegacy)
+
 
 
 async def definirQueIdSetear(extra, id):
@@ -183,13 +190,12 @@ async def definirQueIdSetear(extra, id):
         extra.extra_variable_sub_tipo_evento_id_legacy = id
 
 
-async def setNewforeignLegacyVsNewAux(extra, idLegacy ,empresaLegacyId):
+async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
     global foreignLegacyVsNewAux
     idVsIdLegacy = None
     if extra.tipo_extra == "VARIABLE_CATERING":
-
-        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy ,
-                                                      id_empresa = extra.empresa_id,
+        idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
+                                                      id_empresa=extra.empresa_id,
                                                       id_empresa_legacy=empresaLegacyId
                                                       )
 
@@ -225,7 +231,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy ,empresaLegacyId):
 
         foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
         print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
-              "empresa_id_agendaza",extra.empresa_id,"empresa_id_legacy",empresaLegacyId)
+              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
 
 #################################################################################################################
@@ -238,6 +244,10 @@ async def main():
     global usuarioAgendazaRepository
     global nativeQuerys
     global foreignLegacyVsNewAux
+    global precioConFechaExtraVariableCateringRepository
+    global precioConFechaExtraSubTipoEventoRepository
+    global precioConFechaExtraTipoCateringRepository
+    global precioConFechaExtraVariableEventoRepository
 
     await columnasAuxiliares()
     await ETLUsuario()
@@ -255,6 +265,10 @@ async def main():
     await extraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
+    await precioConFechaExtraETL2(precioConFechaExtraVariableCateringRepository)
+    await precioConFechaExtraETL2(precioConFechaExtraSubTipoEventoRepository)
+    await precioConFechaExtraETL2(precioConFechaExtraTipoCateringRepository)
+    await precioConFechaExtraETL2(precioConFechaExtraVariableEventoRepository)
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -276,6 +290,10 @@ from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, E
     ExtraSubTipoEventoLegacyRepository, ExtraSubTipoCateringLegacyRepository, ExtraVariableSubTipoEventoRepository
 from ETL.agendaza.Extra import Extra
 
+from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariableCateringRepository, \
+    PrecioConFechaExtraSubTipoEventoRepository, PrecioConFechaExtraTipoCateringRepository, \
+    PrecioConFechaExtraVariableEventoRepository
+
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
 clienteReserveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
@@ -293,5 +311,10 @@ extraVariableSubTipoEventoRepository = ExtraVariableSubTipoEventoRepository(cone
 nativeQuerys = NativeQuerys()
 foreignLegacyVsNewAux = ForeignLegacyVsNewAux()
 extraRepository = ExtraRepository(conexionAgendaza.session)
+precioConFechaExtraVariableCateringRepository = PrecioConFechaExtraVariableCateringRepository(
+    conexionGeserveApp.session)
+precioConFechaExtraSubTipoEventoRepository = PrecioConFechaExtraSubTipoEventoRepository(conexionGeserveApp.session)
+precioConFechaExtraTipoCateringRepository = PrecioConFechaExtraTipoCateringRepository(conexionGeserveApp.session)
+precioConFechaExtraVariableEventoRepository = PrecioConFechaExtraVariableEventoRepository(conexionGeserveApp.session)
 # Ejecutar el bucle principal
 asyncio.run(main())
