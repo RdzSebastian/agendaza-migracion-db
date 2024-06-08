@@ -126,10 +126,7 @@ async def cargoETL(empresalist):
     cargoRepository.saveAll(cargos)
 
 
-
-
-
-async def extraETL2(query, foreignLegacyVsNewAux, tipo):
+async def extraETL(query, foreignLegacyVsNewAux, tipo):
     global extraRepository
     extraList = geserveAppQueries.sqlNativeQuery(query)
     empresa_id_id_legacy = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id
@@ -144,7 +141,7 @@ async def extraETL2(query, foreignLegacyVsNewAux, tipo):
         await setNewforeignLegacyVsNewAux(extra, row.id, row.empresa_id)
 
 
-async def precioConFechaExtraETL2(repository, tipo):
+async def precioConFechaExtraETL(repository, tipo):
     global foreignLegacyVsNewAux
     global precioConFechaExtraRepository
     precioConHoraLegacy = repository.getAll()
@@ -214,7 +211,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       id_empresa_legacy=empresaLegacyId
                                                       )
 
-        foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
+        foreignLegacyVsNewAux.variableEventoVsAExtraAgendaList.append(idVsIdLegacy)
         print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
               "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
@@ -241,20 +238,15 @@ async def main():
     await cargoETL(listaEmpresa)
     foreignLegacyVsNewAux.setEmpresaIds(listaEmpresa)
 
-    # await extraETL(empresa, extraSubTipoEventoLegacyRepository)
-    # await extraETL(empresa, extraVariableCateringLegacyRepository)
-    # await extraETL(empresa, extraTipoCateringLegacy)
-    # await extraETL(empresa, extraVariableSubTipoEventoRepository)
-
-    await extraETL2(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
-    await extraETL2(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
-    await extraETL2(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
-    await extraETL2(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
-
-    await precioConFechaExtraETL2(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
-    await precioConFechaExtraETL2(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
-    await precioConFechaExtraETL2(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
-    await precioConFechaExtraETL2(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
+    await extraETL(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
+    await extraETL(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
+    await extraETL(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
+    await extraETL(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
+    print("ETL para precio con fecha extra")
+    await precioConFechaExtraETL(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
+    await precioConFechaExtraETL(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
+    await precioConFechaExtraETL(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
+    await precioConFechaExtraETL(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
