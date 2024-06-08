@@ -51,7 +51,7 @@ class PrecioConFechaTipoCatering(PrecioConFechaLegacy):
         return self.tipo_catering_id
 
     def setearIdLegacy(self, precioConFechaExtra):
-        precioConFechaExtra.extra_tipo_catering_legacy = self.tipo_catering_id
+        precioConFechaExtra.extra_tipo_catering_legacy = self.id
 
 
 class PrecioConFechaSubTipoEvento(PrecioConFechaLegacy):
@@ -62,7 +62,7 @@ class PrecioConFechaSubTipoEvento(PrecioConFechaLegacy):
         return self.extra_sub_tipo_evento_id
 
     def setearIdLegacy(self, precioConFechaExtra):
-        precioConFechaExtra.extra_sub_tipo_evento_legacy = self.extra_sub_tipo_evento_id
+        precioConFechaExtra.extra_sub_tipo_evento_legacy = self.id
 
 
 class PrecioConFechaExtraVariableCatering(PrecioConFechaLegacy):
@@ -73,7 +73,7 @@ class PrecioConFechaExtraVariableCatering(PrecioConFechaLegacy):
         return self.extra_variable_catering_id
 
     def setearIdLegacy(self, precioConFechaExtra):
-        precioConFechaExtra.extra_variable_catering_legacy = self.extra_variable_catering_id
+        precioConFechaExtra.extra_variable_catering_legacy = self.id
 
 
 class PrecioConFechaExtraVariableSubTipoEvento(PrecioConFechaLegacy):
@@ -84,4 +84,4 @@ class PrecioConFechaExtraVariableSubTipoEvento(PrecioConFechaLegacy):
         return self.extra_variable_sub_tipo_evento_id
 
     def setearIdLegacy(self, precioConFechaExtra):
-        precioConFechaExtra.extra_variable_sub_tipo_evento_legacy = self.extra_variable_sub_tipo_evento_id
+        precioConFechaExtra.extra_variable_sub_tipo_evento_legacy = self.id

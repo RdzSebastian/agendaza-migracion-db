@@ -126,39 +126,7 @@ async def cargoETL(empresalist):
     cargoRepository.saveAll(cargos)
 
 
-async def extraETL(empresalist, extraLegacyRepository):
-    global extraRepository
 
-    extraLegacyList = extraLegacyRepository.getAll()
-
-    extraList = transformacion(extraLegacyList)
-
-    finalList = []
-
-    empresaMigradaIdList = [item.id for item in empresalist]
-
-    for idItem in empresaMigradaIdList:
-        for extraItem in extraList:
-            extraItemCopy = copy.deepcopy(extraItem)
-            extraItemCopy.empresa_id = idItem
-            finalList.append(extraItemCopy)
-
-    extraRepository.saveAll(finalList)
-
-    await precioConFechaExtraETL(extraLegacyList, empresalist)
-
-
-async def precioConFechaExtraETL(extraLegacyList, empresalist):
-    precioConFechaList = []
-    empresa_id_id_legacy = {}
-    for item in empresalist:
-        empresa_id_id_legacy[item.id] = item.id_legacy
-
-    for extraLegacy in extraLegacyList:
-        for precio in extraLegacy.listaPrecioFechas():
-            precioConFechaList.append(precio)
-
-    visualizar(precioConFechaList)
 
 
 async def extraETL2(query, foreignLegacyVsNewAux, tipo):
@@ -304,8 +272,8 @@ from ETL.agendaza.Cargo import Cargo
 from repositorio.Repository import Repositorio
 from repositorio.CargoRepository import CargoRepository
 from repositorio.SalonLegacyRepositorio import SalonLegacyRepositorio
-from repositorio.ExtraRepository import ExtraVariableCateringLegacyRepository, ExtraRepository, \
-    ExtraSubTipoEventoLegacyRepository, ExtraSubTipoCateringLegacyRepository, ExtraVariableSubTipoEventoRepository
+from repositorio.ExtraRepository import ExtraRepository
+
 from ETL.agendaza.Extra import Extra
 
 from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariableCateringRepository, \
@@ -322,10 +290,6 @@ agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos
 
 cargoRepository = CargoRepository(conexionAgendaza.session)
 salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
-extraVariableCateringLegacyRepository = ExtraVariableCateringLegacyRepository(conexionGeserveApp.session)
-extraSubTipoEventoLegacyRepository = ExtraSubTipoEventoLegacyRepository(conexionGeserveApp.session)
-extraTipoCateringLegacy = ExtraSubTipoCateringLegacyRepository(conexionGeserveApp.session)
-extraVariableSubTipoEventoRepository = ExtraVariableSubTipoEventoRepository(conexionGeserveApp.session)
 nativeQuerys = NativeQuerys()
 foreignLegacyVsNewAux = ForeignLegacyVsNewAux()
 extraRepository = ExtraRepository(conexionAgendaza.session)
