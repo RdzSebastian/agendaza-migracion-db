@@ -5,6 +5,7 @@ import pandas as pd
 from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
+
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -157,8 +158,23 @@ async def precioConFechaExtraETL(repository, tipo):
 
 async def capacidadETL():
     global capacidadRepository
+    global nativeQuerys
+    global geserveAppQueries
     capacidadListAgendaza = capacidadRepository.getAll()
+
     visualizar(capacidadListAgendaza)
+    capacidadListGeserveApp = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveApp)
+    capacidadLegacyTransformed = []
+
+    for row in capacidadListGeserveApp:
+        capacidadLegacy = Capacidad(capacidad_adultos=row.capacidad_adultos,
+                                    capacidad_ninos=row.capacidad_ninos)
+
+        capacidadLegacyTransformed.append(capacidadLegacy)
+
+    print("transformacion")
+
+    visualizar(capacidadLegacyTransformed)
 
 
 
@@ -277,6 +293,7 @@ from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariabl
     PrecioConFechaExtraVariableEventoRepository, PrecioConFechaExtraRepository
 
 from repositorio.CapacidadRepository import CapacidadRepository
+from ETL.agendaza.Capacidad import Capacidad
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)

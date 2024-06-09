@@ -21,7 +21,7 @@ class NativeQuerys:
     	join precio_con_fecha_extra_variable_sub_tipo_evento extra  on este.id = extra.extra_variable_sub_tipo_evento_id; 
         """
 
-    queryForCargoETL =   query = """
+    queryForCargoETL = query = """
     SELECT u.id_Agendaza AS usuario_id, r.id, r.nombre AS tipo_cargo, s.id AS empresa_id
     FROM usuario u
     JOIN rol r ON u.rol_id = r.id
@@ -30,3 +30,5 @@ class NativeQuerys:
     GROUP BY u.id, r.id, s.id
     ORDER BY usuario_id;
     """
+
+    queryForCapacidadGeserveApp = """select distinct capacidad_adultos , capacidad_ninos  from capacidad;"""
