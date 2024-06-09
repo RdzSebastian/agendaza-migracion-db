@@ -14,7 +14,6 @@ class ForeignLegacyVsNewAux:
         empresa_id_retorno = None
         extra_id_retorno = None
         listaARecorrer = None
-        print("EL TIPO ",tipo)
         if tipo == "VARIABLE_CATERING":
             listaARecorrer = self.variableCateringVsAExtraAgendazaList
 
@@ -31,13 +30,5 @@ class ForeignLegacyVsNewAux:
             if item.cumpleParaPrecioExtra(empresa_id_legacy, extra_id_legacy):
                 empresa_id_retorno = item.id_empresa
                 extra_id_retorno = item.id_agendaza
-
-        if tipo == "VARIABLE_EVENTO" :
-            print("RETORNAR VARIABLE_EVENTO")
-            print("retorno emp",empresa_id_retorno,"extra_id",extra_id_retorno)
-            print("tamaño array variableEVENTO",len(self.variableEventoVsAExtraAgendaList))
-            print("tamaño array VARIABLE CATERING",len(self.variableCateringVsAExtraAgendazaList))
-            print("tamaño array subTipoEventoVsAExtraAgendazaList",len(self.subTipoEventoVsAExtraAgendazaList))
-            print("tamaño array TIPO EVENTO",len(self.tipoCateringVsExtraAgendazaList))
 
         return empresa_id_retorno, extra_id_retorno

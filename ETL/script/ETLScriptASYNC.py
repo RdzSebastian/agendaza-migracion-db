@@ -1,14 +1,11 @@
 from ETL.Conexión import conexionAgendaza
 from ETL.Conexión import conexionGeserveApp
 import pandas as pd
-from typing import List
 
 from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 from ETL.gerservapp_legacy.Legacy import Legacy
-import traceback
-import copy
 
 import asyncio
 
@@ -158,6 +155,14 @@ async def precioConFechaExtraETL(repository, tipo):
     precioConFechaExtraRepository.saveAll(precioConHoraAgendazaList)
 
 
+async def capacidadETL():
+    global capacidadRepository
+    capacidadListAgendaza = capacidadRepository.getAll()
+    visualizar(capacidadListAgendaza)
+
+
+
+
 async def definirQueIdSetear(extra, id):
     if extra.tipo_extra == "VARIABLE_CATERING":
         extra.extra_variable_catering_id_legacy = id
@@ -247,6 +252,7 @@ async def main():
     await precioConFechaExtraETL(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
     await precioConFechaExtraETL(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
     await precioConFechaExtraETL(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
+    await capacidadETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -265,12 +271,12 @@ from repositorio.Repository import Repositorio
 from repositorio.CargoRepository import CargoRepository
 from repositorio.SalonLegacyRepositorio import SalonLegacyRepositorio
 from repositorio.ExtraRepository import ExtraRepository
-
 from ETL.agendaza.Extra import Extra
-
 from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariableCateringRepository, \
     PrecioConFechaExtraSubTipoEventoRepository, PrecioConFechaExtraTipoCateringRepository, \
     PrecioConFechaExtraVariableEventoRepository, PrecioConFechaExtraRepository
+
+from repositorio.CapacidadRepository import CapacidadRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -279,6 +285,7 @@ empresaGeserveAppRepository = EmpresaRepository(conexionGeserveApp.session)
 empresaAgendazaAppRepository = EmpresaRepository(conexionAgendaza.session)
 geserveAppQueries = Repositorio(conexionGeserveApp.session)  # Util cuando usamos nativeQuery
 agendazaAppQueries = Repositorio(conexionAgendaza.session)  # Util cuando usamos nativeQuery
+capacidadRepository = CapacidadRepository(conexionAgendaza.session)
 
 cargoRepository = CargoRepository(conexionAgendaza.session)
 salonLegacyRepository = SalonLegacyRepositorio(conexionGeserveApp.session)
