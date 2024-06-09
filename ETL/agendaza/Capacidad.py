@@ -7,7 +7,8 @@ class Capacidad(conexionAgendaza.Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     capacidad_adultos = Column(Integer)
-    capacidad_ninos = Column(String)
+    capacidad_ninos = Column(Integer)
+    es_migrado = Column(Boolean)
 
     def __init__(self, capacidad_adultos, capacidad_ninos):
         self.capacidad_adultos = capacidad_adultos

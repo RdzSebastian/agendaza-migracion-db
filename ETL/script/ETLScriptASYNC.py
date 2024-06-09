@@ -2,6 +2,7 @@ from ETL.Conexión import conexionAgendaza
 from ETL.Conexión import conexionGeserveApp
 import pandas as pd
 
+from ETL.Utils.CapacidadUtil import CapacidadUtil
 from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
@@ -54,6 +55,9 @@ async def columnasAuxiliares():
         "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_sub_tipo_evento_legacy INTEGER")
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_tipo_catering_legacy INTEGER")
+
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE capacidad ADD COLUMN es_migrado BOOLEAN")
 
 
 async def ETLUsuario():
@@ -156,29 +160,6 @@ async def precioConFechaExtraETL(repository, tipo):
     precioConFechaExtraRepository.saveAll(precioConHoraAgendazaList)
 
 
-async def capacidadETL():
-    global capacidadRepository
-    global nativeQuerys
-    global geserveAppQueries
-    capacidadListAgendaza = capacidadRepository.getAll()
-
-    visualizar(capacidadListAgendaza)
-    capacidadListGeserveApp = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveApp)
-    capacidadLegacyTransformed = []
-
-    for row in capacidadListGeserveApp:
-        capacidadLegacy = Capacidad(capacidad_adultos=row.capacidad_adultos,
-                                    capacidad_ninos=row.capacidad_ninos)
-
-        capacidadLegacyTransformed.append(capacidadLegacy)
-
-    print("transformacion")
-
-    visualizar(capacidadLegacyTransformed)
-
-
-
-
 async def definirQueIdSetear(extra, id):
     if extra.tipo_extra == "VARIABLE_CATERING":
         extra.extra_variable_catering_id_legacy = id
@@ -235,6 +216,26 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
         foreignLegacyVsNewAux.variableEventoVsAExtraAgendaList.append(idVsIdLegacy)
         print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
               "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
+
+
+async def capacidadETL():
+    global capacidadRepository
+    global nativeQuerys
+    global geserveAppQueries
+    capacidadListAgendaza = capacidadRepository.getAll()
+    capacidadUtil = CapacidadUtil()
+
+    capacidadListGeserveApp = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveApp)
+    capacidadLegacyTransformed = []
+
+    for row in capacidadListGeserveApp:
+        capacidadLegacy = Capacidad(capacidad_adultos=row.capacidad_adultos,
+                                    capacidad_ninos=row.capacidad_ninos)
+        capacidadLegacyTransformed.append(capacidadLegacy)
+
+    capacidadAMigrar = capacidadUtil.obtenerCombinacionesQueNoExistenEnAgendaza(capacidadListAgendaza,
+                                                                                capacidadLegacyTransformed)
+    capacidadRepository.saveAll(capacidadAMigrar)
 
 
 #################################################################################################################
