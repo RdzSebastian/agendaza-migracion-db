@@ -223,7 +223,7 @@ async def capacidadETL():
     global nativeQuerys
     global geserveAppQueries
     capacidadListAgendaza = capacidadRepository.getAll()
-    capacidadUtil = CapacidadUtil()
+    global capacidadUtil
 
     capacidadListGeserveApp = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveApp)
     capacidadLegacyTransformed = []
@@ -316,5 +316,6 @@ precioConFechaExtraSubTipoEventoRepository = PrecioConFechaExtraSubTipoEventoRep
 precioConFechaExtraTipoCateringRepository = PrecioConFechaExtraTipoCateringRepository(conexionGeserveApp.session)
 precioConFechaExtraVariableEventoRepository = PrecioConFechaExtraVariableEventoRepository(conexionGeserveApp.session)
 precioConFechaExtraRepository = PrecioConFechaExtraRepository(conexionAgendaza.session)
+capacidadUtil = CapacidadUtil()
 # Ejecutar el bucle principal
 asyncio.run(main())
