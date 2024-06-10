@@ -39,9 +39,9 @@ class NativeQuerys:
             SELECT DISTINCT
             STE.ID,
             STE.NOMBRE,
-            STE.DURACION,
+            STE.DURACION AS CANTIDAD_DURACION,
             STE.CAPACIDAD_ID,
-            UPPER(TE.NOMBRE) AS CANTIDAD_DURACION,
+            UPPER(TE.NOMBRE) AS DURACION,
             PCFS.SALON_ID AS EMPRESA_ID
             
         FROM

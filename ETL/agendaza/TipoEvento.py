@@ -12,6 +12,7 @@ class TipoEvento(conexionAgendaza.Base):
     cantidad_duracion = Column(Time)
     empresa_id = Column(Integer)
     fecha_baja = Column(Date)
+    tipo_evento_legacy =Column(Integer)
 
     def __init__(self, nombre, duracion, capacidad_id, cantidad_duracion, empresa_id):
         self.nombre = nombre

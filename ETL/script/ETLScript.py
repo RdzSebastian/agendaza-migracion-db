@@ -59,6 +59,9 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE capacidad ADD COLUMN es_migrado BOOLEAN")
 
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE tipo_evento ADD COLUMN tipo_evento_legacy INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -271,6 +274,7 @@ async def tipoEventoETL():
     global geserveAppQueries
     global capacidadUtil
     global foreignLegacyVsNewAux
+    global tipoEventoRepository
     listaDeTipoEventosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.querySubTipoEventoLegacy)
 
     listaAMigrar = []
@@ -282,6 +286,12 @@ async def tipoEventoETL():
                                     tipoEventoLegacy.capacidad_id),
                                 cantidad_duracion=tipoEventoLegacy.cantidad_duracion,
                                 empresa_id=foreignLegacyVsNewAux.obtenerFkEmpresaAgendaza(tipoEventoLegacy.empresa_id))
+
+        tipoEvento.tipo_evento_legacy=tipoEventoLegacy.id
+
+        listaAMigrar.append(tipoEvento)
+
+    tipoEventoRepository.saveAll(listaAMigrar)
 
 
 ##############################################################################################################
@@ -341,6 +351,8 @@ from repositorio.CapacidadRepository import CapacidadRepository
 from ETL.agendaza.Capacidad import Capacidad
 from ETL.agendaza.TipoEvento import TipoEvento
 
+from repositorio.TipoEventoRepository import TipoEventoRepository
+
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
 clienteReserveappRepository = ClienteLegacyRepository(conexionGeserveApp.session)
@@ -362,5 +374,7 @@ precioConFechaExtraTipoCateringRepository = PrecioConFechaExtraTipoCateringRepos
 precioConFechaExtraVariableEventoRepository = PrecioConFechaExtraVariableEventoRepository(conexionGeserveApp.session)
 precioConFechaExtraRepository = PrecioConFechaExtraRepository(conexionAgendaza.session)
 capacidadUtil = CapacidadUtil()
+tipoEventoRepository = TipoEventoRepository(conexionAgendaza.session)
+
 # Ejecutar el bucle principal
 asyncio.run(main())
