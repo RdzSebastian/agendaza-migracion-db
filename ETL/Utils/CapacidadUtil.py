@@ -1,7 +1,6 @@
 class CapacidadUtil:
     capacidadAgendazaList = []
 
-    capacidadLegacyCapacidadAgendazaDic = {}
 
     def obtenerCombinacionesQueNoExistenEnAgendaza(self, capacidadAgendazaList, capacidadLegacyList):
 
@@ -24,14 +23,16 @@ class CapacidadUtil:
 
     def generarDiccionarioIdLegacyIdAgendaza(self, capacidadesLegacy):
 
+        dicARetornar = {}
+
         for capacidadLegacy in capacidadesLegacy:
             idAgendaza = self.determinarElIdActualEnAgendaza(
                 capacidadLegacy)
             print(capacidadLegacy.id ,idAgendaza )
 
-            self.capacidadLegacyCapacidadAgendazaDic[capacidadLegacy.id] = idAgendaza
+            dicARetornar[capacidadLegacy.id] = idAgendaza
 
-        print(self.capacidadLegacyCapacidadAgendazaDic)
+        return dicARetornar
 
     def determinarElIdActualEnAgendaza(self, capacidadLegacy):
 
@@ -40,5 +41,3 @@ class CapacidadUtil:
 
                 return capacidadAgendaza.id
 
-    def obtenerCapacidadAgendaza(self,idLegacy):
-        return self.capacidadLegacyCapacidadAgendazaDic.get(idLegacy)

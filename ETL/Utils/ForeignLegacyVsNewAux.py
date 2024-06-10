@@ -6,6 +6,8 @@ class ForeignLegacyVsNewAux:
     tipoCateringVsExtraAgendazaList = []
     variableEventoVsAExtraAgendaList = []
 
+    capacidadIdLegacyCapacidadIdAgendazaDic = {}
+
     def setEmpresaIds(self, empresaList):
         for item in empresaList:
             self.empresa_id_legacy_vs_agendaza_id[item.id_legacy] = item.id
@@ -32,3 +34,6 @@ class ForeignLegacyVsNewAux:
                 extra_id_retorno = item.id_agendaza
 
         return empresa_id_retorno, extra_id_retorno
+
+    def obtenerFkCapacidadAgendaza(self, idLegacy):
+        return self.capacidadIdLegacyCapacidadIdAgendazaDic.get(idLegacy)

@@ -7,7 +7,6 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
-
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -246,6 +245,7 @@ async def postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar):
     global nativeQuerys
     global geserveAppQueries
     global capacidadUtil
+    global foreignLegacyVsNewAux
 
     capacidadUtil.capacidadAgendazaList = capacidadListAgendaza
 
@@ -262,13 +262,15 @@ async def postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar):
         capacidadLegacy.id = row.id
         todasLasCapacidadesLegacyTransformadas.append(capacidadLegacy)
 
-    capacidadUtil.generarDiccionarioIdLegacyIdAgendaza(todasLasCapacidadesLegacyTransformadas)
+    dic = capacidadUtil.generarDiccionarioIdLegacyIdAgendaza(todasLasCapacidadesLegacyTransformadas)
+    foreignLegacyVsNewAux.capacidadIdLegacyCapacidadIdAgendazaDic = dic
 
 
 async def tipoEventoETL():
     global nativeQuerys
     global geserveAppQueries
     global capacidadUtil
+    global foreignLegacyVsNewAux
     listaDeTipoEventosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.querySubTipoEventoLegacy)
 
     listaAMigrar = []
@@ -276,15 +278,10 @@ async def tipoEventoETL():
     for tipoEventoLegacy in listaDeTipoEventosLegacy:
         tipoEvento = TipoEvento(nombre=tipoEventoLegacy.nombre,
                                 duracion=tipoEventoLegacy.duracion,
-                                capacidad_id=capacidadUtil.obtenerCapacidadAgendaza(tipoEventoLegacy.capacidad_id),
+                                capacidad_id=foreignLegacyVsNewAux.obtenerFkCapacidadAgendaza(
+                                    tipoEventoLegacy.capacidad_id),
                                 cantidad_duracion=tipoEventoLegacy.cantidad_duracion,
                                 empresa_id=tipoEventoLegacy.empresa_id)
-
-
-
-
-
-
 
 
 ##############################################################################################################
