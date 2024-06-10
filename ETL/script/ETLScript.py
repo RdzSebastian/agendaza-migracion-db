@@ -281,7 +281,7 @@ async def tipoEventoETL():
                                 capacidad_id=foreignLegacyVsNewAux.obtenerFkCapacidadAgendaza(
                                     tipoEventoLegacy.capacidad_id),
                                 cantidad_duracion=tipoEventoLegacy.cantidad_duracion,
-                                empresa_id=tipoEventoLegacy.empresa_id)
+                                empresa_id=foreignLegacyVsNewAux.obtenerFkEmpresaAgendaza(tipoEventoLegacy.empresa_id))
 
 
 ##############################################################################################################

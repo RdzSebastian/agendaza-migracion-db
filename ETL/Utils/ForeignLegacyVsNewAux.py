@@ -37,3 +37,6 @@ class ForeignLegacyVsNewAux:
 
     def obtenerFkCapacidadAgendaza(self, idLegacy):
         return self.capacidadIdLegacyCapacidadIdAgendazaDic.get(idLegacy)
+
+    def obtenerFkEmpresaAgendaza(self,idLegacy):
+        return self.empresa_id_legacy_vs_agendaza_id.get(idLegacy)
