@@ -32,3 +32,20 @@ class NativeQuerys:
     """
 
     queryForCapacidadGeserveApp = """select distinct capacidad_adultos , capacidad_ninos  from capacidad;"""
+
+    queryForCapacidadGeserveAppFullPostMigration = """ SELECT  * FROM  capacidad;"""
+
+    querySubTipoEventoLegacy = """
+            SELECT DISTINCT
+            STE.ID,
+            STE.NOMBRE,
+            STE.DURACION,
+            STE.CAPACIDAD_ID,
+            UPPER(TE.NOMBRE) AS CANTIDAD_DURACION,
+            PCFS.SALON_ID AS EMPRESA_ID
+            
+        FROM
+            SUB_TIPO_EVENTO STE
+            JOIN TIPO_EVENTO TE ON TE.ID = STE.TIPO_EVENTO_ID
+            JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO PCFS ON  STE.ID =PCFS.SUB_TIPO_EVENTO_ID
+    """

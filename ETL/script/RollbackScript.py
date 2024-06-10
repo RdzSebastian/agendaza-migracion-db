@@ -65,7 +65,6 @@ try:
 
     queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM capacidad where es_migrado IS TRUE"))
 
-
     for item in queryDeleteFromList:
         item.borrarRegistros()
 
@@ -120,14 +119,21 @@ try:
     else:
         print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
 
-    idFechaConPrecioExtraMax  = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM precio_con_fecha_extra").scalar()
+    idFechaConPrecioExtraMax = agendazaAppQueries.sqlNativeQuery(
+        "SELECT MAX(id)+1 FROM precio_con_fecha_extra").scalar()
 
     if idExtraMax is not None:
-        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE precio_con_fecha_extra_id_seq RESTART WITH {idFechaConPrecioExtraMax}")
+        agendazaAppQueries.sqlNativeQuery(
+            f"ALTER SEQUENCE precio_con_fecha_extra_id_seq RESTART WITH {idFechaConPrecioExtraMax}")
     else:
         print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
 
+    idCapacidadMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM capacidad").scalar()
 
+    if idExtraMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE capacidad_id_seq RESTART WITH {idCapacidadMax}")
+    else:
+        print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
 
 except Exception as e:
     for repositorios in repositorioList:

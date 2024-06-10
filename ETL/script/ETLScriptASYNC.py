@@ -237,8 +237,31 @@ async def capacidadETL():
                                                                                 capacidadLegacyTransformed)
     capacidadRepository.saveAll(capacidadAMigrar)
 
+    await postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar)
 
-#################################################################################################################
+
+async def postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar):
+    global capacidadRepository
+    global nativeQuerys
+    global geserveAppQueries
+    global capacidadUtil
+
+    capacidadUtil.capacidadAgendazaList = capacidadListAgendaza
+
+    for cap in capacidadAMigrar:
+        capacidadUtil.capacidadAgendazaList.append(cap)
+
+    todasLasCapacidades = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveAppFullPostMigration)
+
+    todasLasCapacidadesLegacyTransformadas = []
+
+    for row in todasLasCapacidades:
+        capacidadLegacy = Capacidad(capacidad_adultos=row.capacidad_adultos,
+                                    capacidad_ninos=row.capacidad_ninos)
+        capacidadLegacy.id =row.id
+        todasLasCapacidadesLegacyTransformadas.append(capacidadLegacy)
+
+    capacidadUtil.generarDiccionarioIdLegacyIdAgendaza(todasLasCapacidadesLegacyTransformadas)
 
 
 ##############################################################################################################
