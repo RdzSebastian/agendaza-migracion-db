@@ -39,3 +39,6 @@ class CapacidadUtil:
             if capacidadAgendaza.capacidad_adultos == capacidadLegacy.capacidad_adultos and capacidadAgendaza.capacidad_ninos == capacidadLegacy.capacidad_ninos:
 
                 return capacidadAgendaza.id
+
+    def obtenerCapacidadAgendaza(self,idLegacy):
+        return self.capacidadLegacyCapacidadAgendazaDic.get(idLegacy)

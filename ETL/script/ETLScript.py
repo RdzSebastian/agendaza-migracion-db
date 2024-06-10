@@ -7,6 +7,7 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
+
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -258,10 +259,32 @@ async def postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar):
     for row in todasLasCapacidades:
         capacidadLegacy = Capacidad(capacidad_adultos=row.capacidad_adultos,
                                     capacidad_ninos=row.capacidad_ninos)
-        capacidadLegacy.id =row.id
+        capacidadLegacy.id = row.id
         todasLasCapacidadesLegacyTransformadas.append(capacidadLegacy)
 
     capacidadUtil.generarDiccionarioIdLegacyIdAgendaza(todasLasCapacidadesLegacyTransformadas)
+
+
+async def tipoEventoETL():
+    global nativeQuerys
+    global geserveAppQueries
+    global capacidadUtil
+    listaDeTipoEventosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.querySubTipoEventoLegacy)
+
+    listaAMigrar = []
+
+    for tipoEventoLegacy in listaDeTipoEventosLegacy:
+        tipoEvento = TipoEvento(nombre=tipoEventoLegacy.nombre,
+                                duracion=tipoEventoLegacy.duracion,
+                                capacidad_id=capacidadUtil.obtenerCapacidadAgendaza(tipoEventoLegacy.capacidad_id),
+                                cantidad_duracion=tipoEventoLegacy.cantidad_duracion,
+                                empresa_id=tipoEventoLegacy.empresa_id)
+
+
+
+
+
+
 
 
 ##############################################################################################################
@@ -293,6 +316,7 @@ async def main():
     await precioConFechaExtraETL(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
     await precioConFechaExtraETL(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
     await capacidadETL()
+    await tipoEventoETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -318,6 +342,7 @@ from repositorio.PrecioConFechaExtraRepository import PrecioConFechaExtraVariabl
 
 from repositorio.CapacidadRepository import CapacidadRepository
 from ETL.agendaza.Capacidad import Capacidad
+from ETL.agendaza.TipoEvento import TipoEvento
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
