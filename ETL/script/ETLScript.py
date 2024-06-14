@@ -309,9 +309,28 @@ async def postTipoEventoETL(listaTipoEventos):
 async def precioConFechaEventoRepositoryETL():
     global nativeQuerys
     global geserveAppQueries
+    global foreignLegacyVsNewAux
 
-    listaDeFechaEventoRepository = geserveAppQueries.sqlNativeQuery(
+    listaDeFechaEventoLegacyRepository = geserveAppQueries.sqlNativeQuery(
         nativeQuerys.queryForPrecioConFechaSubTipoEventoGeserveApp)
+
+    for fechaEventoLegacy in listaDeFechaEventoLegacyRepository:
+        empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(fechaEventoLegacy.id)
+        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
+            fechaEventoLegacy.tipo_evento_id)
+
+        precioConFechaEventoAMigrar = PrecioConFechaEvento(
+            desde=fechaEventoLegacy.desde
+            , hasta=fechaEventoLegacy.hasta,
+            precio=fechaEventoLegacy.precio,
+            empresa_id=empresa_id,
+            tipo_evento_id=tipo_evento_id
+        )
+
+        #precioConFechaEventoRepository.saveAll(precioConFechaEventoAMigrar)
+
+
+
 
 
 ##############################################################################################################
@@ -373,6 +392,8 @@ from ETL.agendaza.TipoEvento import TipoEvento
 
 from repositorio.TipoEventoRepository import TipoEventoRepository
 from repositorio.PrecioConFechaEventoRepository import PrecioConFechaEventoRepository
+from ETL.agendaza.PrecioConFechaEvento import PrecioConFechaEvento
+
 
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)

@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func, Boolean
 from ETL.Conexión import conexionAgendaza
-from datetime import date
 
 
 class PrecioConFechaEvento(conexionAgendaza.Base):
