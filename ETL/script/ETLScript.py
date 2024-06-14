@@ -12,6 +12,7 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
+
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -287,7 +288,7 @@ async def tipoEventoETL():
                                 cantidad_duracion=tipoEventoLegacy.cantidad_duracion,
                                 empresa_id=foreignLegacyVsNewAux.obtenerFkEmpresaAgendaza(tipoEventoLegacy.empresa_id))
 
-        tipoEvento.tipo_evento_legacy=tipoEventoLegacy.id
+        tipoEvento.tipo_evento_legacy = tipoEventoLegacy.id
 
         listaAMigrar.append(tipoEvento)
 
@@ -302,12 +303,15 @@ async def postTipoEventoETL(listaTipoEventos):
         foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic[
             tipoEventoMigrado.tipo_evento_legacy] = tipoEventoMigrado.id
 
-    print("diccionarios",foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic)
+    print("diccionarios", foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic)
 
 
+async def precioConFechaEventoRepositoryETL():
+    global nativeQuerys
+    global geserveAppQueries
 
-
-
+    listaDeFechaEventoRepository = geserveAppQueries.sqlNativeQuery(
+        nativeQuerys.queryForPrecioConFechaSubTipoEventoGeserveApp)
 
 
 ##############################################################################################################
@@ -368,6 +372,8 @@ from ETL.agendaza.Capacidad import Capacidad
 from ETL.agendaza.TipoEvento import TipoEvento
 
 from repositorio.TipoEventoRepository import TipoEventoRepository
+from repositorio.PrecioConFechaEventoRepository import PrecioConFechaEventoRepository
+
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -391,6 +397,7 @@ precioConFechaExtraVariableEventoRepository = PrecioConFechaExtraVariableEventoR
 precioConFechaExtraRepository = PrecioConFechaExtraRepository(conexionAgendaza.session)
 capacidadUtil = CapacidadUtil()
 tipoEventoRepository = TipoEventoRepository(conexionAgendaza.session)
+precioConFechaEventoRepository = PrecioConFechaEventoRepository(conexionAgendaza.session)
 
 # Ejecutar el bucle principal
 asyncio.run(main())
