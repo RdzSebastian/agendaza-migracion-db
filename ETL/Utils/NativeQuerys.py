@@ -49,3 +49,15 @@ class NativeQuerys:
             JOIN TIPO_EVENTO TE ON TE.ID = STE.TIPO_EVENTO_ID
             JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO PCFS ON  STE.ID =PCFS.SUB_TIPO_EVENTO_ID
     """
+
+    queryForPrecioConFechaSubTipoEventoGeserveApp = """
+            SELECT
+            ID,
+            PRECIO,
+            DESDE,
+            HASTA,
+            SALON_ID AS EMPRESA_ID,
+            SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID
+        FROM
+            PRECIO_CON_FECHA_SUB_TIPO_EVENTO;
+    """

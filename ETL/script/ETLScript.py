@@ -292,6 +292,22 @@ async def tipoEventoETL():
         listaAMigrar.append(tipoEvento)
 
     tipoEventoRepository.saveAll(listaAMigrar)
+    await postTipoEventoETL(listaAMigrar)
+
+
+async def postTipoEventoETL(listaTipoEventos):
+    global foreignLegacyVsNewAux
+
+    for tipoEventoMigrado in listaTipoEventos:
+        foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic[
+            tipoEventoMigrado.tipo_evento_legacy] = tipoEventoMigrado.id
+
+    print("diccionarios",foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic)
+
+
+
+
+
 
 
 ##############################################################################################################
