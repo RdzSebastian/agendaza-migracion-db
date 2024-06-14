@@ -3,13 +3,14 @@ from ETL.Conexión import conexionAgendaza
 
 
 class PrecioConFechaEvento(conexionAgendaza.Base):
-    __tablename__ = 'precio_con_fecha_evento'
+    __tablename__ = 'precio_con_fecha_tipo_evento'
     id = Column(Integer, primary_key=True, autoincrement=True)
     desde = Column(Date)
     hasta = Column(Date)
     precio = Column(Integer)
     empresa_id = Column(Integer)
     tipo_evento_id = Column(Integer)
+    id_legacy = Column(Integer)
 
     def __init__(self, desde, hasta, precio, empresa_id, tipo_evento_id):
         self.desde = desde

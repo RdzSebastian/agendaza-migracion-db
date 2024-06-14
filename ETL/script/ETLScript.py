@@ -63,6 +63,10 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE tipo_evento ADD COLUMN tipo_evento_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_tipo_evento ADD COLUMN id_legacy INTEGER")
+
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -314,6 +318,8 @@ async def precioConFechaEventoRepositoryETL():
     listaDeFechaEventoLegacyRepository = geserveAppQueries.sqlNativeQuery(
         nativeQuerys.queryForPrecioConFechaSubTipoEventoGeserveApp)
 
+    lista_a_migrar = []
+
     for fechaEventoLegacy in listaDeFechaEventoLegacyRepository:
         empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(fechaEventoLegacy.id)
         tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
@@ -327,7 +333,10 @@ async def precioConFechaEventoRepositoryETL():
             tipo_evento_id=tipo_evento_id
         )
 
-        #precioConFechaEventoRepository.saveAll(precioConFechaEventoAMigrar)
+        lista_a_migrar.append(precioConFechaEventoAMigrar)
+
+
+        precioConFechaEventoRepository.saveAll(lista_a_migrar)
 
 
 
