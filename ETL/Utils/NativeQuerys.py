@@ -59,5 +59,7 @@ class NativeQuerys:
             SALON_ID AS EMPRESA_ID,
             SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID
         FROM
-            PRECIO_CON_FECHA_SUB_TIPO_EVENTO;
+            PRECIO_CON_FECHA_SUB_TIPO_EVENTO
+        WHERE PRECIO > 0
+            ;
     """
