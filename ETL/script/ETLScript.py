@@ -321,7 +321,8 @@ async def precioConFechaEventoRepositoryETL():
     lista_a_migrar = []
 
     for fechaEventoLegacy in listaDeFechaEventoLegacyRepository:
-        empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(fechaEventoLegacy.id)
+        empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(fechaEventoLegacy.empresa_id)
+        print("empresa id ",empresa_id)
         tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
             fechaEventoLegacy.tipo_evento_id)
 
@@ -332,6 +333,8 @@ async def precioConFechaEventoRepositoryETL():
             empresa_id=empresa_id,
             tipo_evento_id=tipo_evento_id
         )
+
+        precioConFechaEventoAMigrar.id_legacy = fechaEventoLegacy.id
 
         lista_a_migrar.append(precioConFechaEventoAMigrar)
 
@@ -372,6 +375,7 @@ async def main():
     await precioConFechaExtraETL(precioConFechaExtraVariableEventoRepository, "VARIABLE_EVENTO")
     await capacidadETL()
     await tipoEventoETL()
+    await precioConFechaEventoRepositoryETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
