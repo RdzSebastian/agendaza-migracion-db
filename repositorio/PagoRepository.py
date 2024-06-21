@@ -6,7 +6,7 @@ from ETL.gerservapp_legacy.PrecioConFechaLegacy import PrecioConFechaTipoCaterin
 from repositorio.Repository import Repositorio
 
 
-class ExtraRepository(Repositorio[Pago]):
+class PagoRepository(Repositorio[Pago]):
     def __init__(self, session: sessionmaker):
         super().__init__(session)
 

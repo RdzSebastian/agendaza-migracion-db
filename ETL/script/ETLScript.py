@@ -12,7 +12,6 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
-
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -67,7 +66,6 @@ async def columnasAuxiliares():
         "ALTER TABLE precio_con_fecha_tipo_evento ADD COLUMN id_legacy INTEGER")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE EVENTO ADD COLUMN evento_id_legacy INTEGER")
-
 
 
 async def ETLUsuario():
@@ -361,12 +359,12 @@ async def eventoETL():
     eventosAMigrar = []
 
     for eventoLegacy in eventosLegacyList:
-
         capacidad_id = foreignLegacyVsNewAux.capacidadIdLegacyCapacidadIdAgendazaDic.get(eventoLegacy.capacidad_id)
         cliente_id = foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id.get(eventoLegacy.cliente_id)
         empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(eventoLegacy.empresa_id)
-        encargado_id =foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id.get(eventoLegacy.encargado_id)
-        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(eventoLegacy.tipo_evento_id)
+        encargado_id = foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id.get(eventoLegacy.encargado_id)
+        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
+            eventoLegacy.tipo_evento_id)
 
         eventoAMigrar = Evento(
             catering_otro=eventoLegacy.catering_otro,
@@ -397,9 +395,29 @@ async def postEventoETL(listaDeEventosMigrados):
     for eventoMigrado in listaDeEventosMigrados:
         foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id[eventoMigrado.evento_id_legacy] = eventoMigrado.id
 
-    print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ",foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
+    print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ", foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
 
 
+async def PagoETL():
+    global geserveAppQueries
+    global pagoRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+
+    listaDePagosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForPago)
+    listaAMigrar = []
+
+    for pagoLegacy in listaDePagosLegacy:
+        encargado_id = foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id.get(pagoLegacy.encargado_id)
+        evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(pagoLegacy.evento_id)
+
+        pagoAMigrar = Pago(
+            fecha=pagoLegacy.fecha,
+            medio_de_pago=pagoLegacy.medio_de_pago,
+            monto=pagoLegacy.monto,
+            encargado_id=encargado_id,
+            evento_id=evento_id)
+        listaAMigrar.append(pagoAMigrar)
 
 
 ##############################################################################################################
@@ -433,6 +451,7 @@ async def main():
     await tipoEventoETL()
     await precioConFechaEventoRepositoryETL()
     await eventoETL()
+    await PagoETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -465,7 +484,8 @@ from repositorio.PrecioConFechaEventoRepository import PrecioConFechaEventoRepos
 from ETL.agendaza.PrecioConFechaEvento import PrecioConFechaEvento
 from repositorio.EventoRepository import EventoRepository
 from ETL.agendaza.Evento import Evento
-
+from repositorio.PagoRepository import PagoRepository
+from ETL.agendaza.Pago import Pago
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -491,6 +511,7 @@ capacidadUtil = CapacidadUtil()
 tipoEventoRepository = TipoEventoRepository(conexionAgendaza.session)
 precioConFechaEventoRepository = PrecioConFechaEventoRepository(conexionAgendaza.session)
 eventoRepository = EventoRepository(conexionAgendaza.session)
+pagoRepository = PagoRepository(conexionAgendaza.session)
 
 # Ejecutar el bucle principal
 asyncio.run(main())
