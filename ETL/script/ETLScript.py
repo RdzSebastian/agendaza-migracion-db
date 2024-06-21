@@ -7,6 +7,7 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
+
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -402,7 +403,7 @@ async def postEventoETL(listaDeEventosMigrados):
     print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ", foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
 
 
-async def PagoETL():
+async def pagoETL():
     global geserveAppQueries
     global pagoRepository
     global nativeQuerys
@@ -427,6 +428,31 @@ async def PagoETL():
         listaAMigrar.append(pagoAMigrar)
 
     pagoRepository.saveAll(listaAMigrar)
+
+async def servioETL():
+    global geserveAppQueries
+    global pagoRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+
+    listaDeServiciosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForServicio)
+    listaAMigrar = []
+
+    for servicioLegacy in listaDeServiciosLegacy:
+        empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(servicioLegacy.empresa_id)
+
+        servicioAMigrar = Servicio(fecha_baja=None,
+                                   empresa_id=empresa_id,
+                                   nombre=servicioLegacy.nombre)
+
+        listaAMigrar.append(servicioLegacy)
+
+
+
+
+
+
+
 
 
 
@@ -461,7 +487,8 @@ async def main():
     await tipoEventoETL()
     await precioConFechaEventoRepositoryETL()
     await eventoETL()
-    await PagoETL()
+    await pagoETL()
+    await servioETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -497,6 +524,7 @@ from ETL.agendaza.Evento import Evento
 from repositorio.PagoRepository import PagoRepository
 from ETL.agendaza.Pago import Pago
 from repositorio.ServicioRepository import ServicioRepository
+from ETL.agendaza.Servicio import Servicio
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
