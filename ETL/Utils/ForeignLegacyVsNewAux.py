@@ -2,15 +2,15 @@ class ForeignLegacyVsNewAux:
     empresa_id_legacy_vs_agendaza_id = {}
     usuario_id_legacy_vs_agendaza_id = {}
     cliente_id_legacy_vs_agendaza_id = {}
+    evento_id_legacy_vs_agendaza_id = {}
 
     variableCateringVsAExtraAgendazaList = []
     subTipoEventoVsAExtraAgendazaList = []
     tipoCateringVsExtraAgendazaList = []
     variableEventoVsAExtraAgendaList = []
-
     capacidadIdLegacyCapacidadIdAgendazaDic = {}
-
     tipoEventoIdLegacyTipoEventoIdAgendazaDic = {}
+
 
     def setEmpresaIds(self, empresaList):
         for item in empresaList:

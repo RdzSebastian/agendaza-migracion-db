@@ -388,19 +388,16 @@ async def eventoETL():
         eventosAMigrar.append(eventoAMigrar)
 
     eventoRepository.saveAll(eventosAMigrar)
+    await postEventoETL(eventosAMigrar)
 
 
+async def postEventoETL(listaDeEventosMigrados):
+    global foreignLegacyVsNewAux
 
+    for eventoMigrado in listaDeEventosMigrados:
+        foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id[eventoMigrado.evento_id_legacy] = eventoMigrado.id
 
-
-
-
-
-
-
-
-
-
+    print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ",foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
 
 
 
