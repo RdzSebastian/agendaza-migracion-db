@@ -8,7 +8,7 @@ class Evento(conexionAgendaza.Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     anotaciones = Column(String)
-    catering_otros = Column(Float)
+    catering_otro = Column(Float)
     catering_otro_descripcion = Column(String)
     codigo = Column(String)
     descuento = Column(Integer)
@@ -22,13 +22,14 @@ class Evento(conexionAgendaza.Base):
     empresa_id = Column(Integer)
     encargado_id = Column(Integer)
     tipo_evento_id = Column(Integer)
+    evento_id_legacy = Column(Integer)
 
-    def __init__(self, catering_otros=None,
+    def __init__(self, catering_otro=None,
                  codigo=None, descuento=None, estado=None, extra_otro=None, fin=None,
                  inicio=None, nombre=None, capacidad_id=None, cliente_id=None,
-                 empresa_id=None, encargado_id=None, tipo_evento_id=None):
+                 empresa_id=None, encargado_id=None, tipo_evento_id=None , evento_id_legacy = None):
         self.anotaciones = ""
-        self.catering_otros = catering_otros
+        self.catering_otro = catering_otro
         self.catering_otro_descripcion = ""
         self.codigo = codigo
         self.descuento = descuento
@@ -42,3 +43,4 @@ class Evento(conexionAgendaza.Base):
         self.empresa_id = empresa_id
         self.encargado_id = encargado_id
         self.tipo_evento_id = tipo_evento_id
+        self.evento_id_legacy = evento_id_legacy

@@ -65,9 +65,9 @@ class NativeQuerys:
     """
 
     queryForEvento = """
-        SELECT
+    SELECT
         E.ID,
-        CA.PRESUPUESTO AS CATERING_OTRO,
+        CA.CATERING_OTRO AS CATERING_OTRO,
         E.CODIGO AS CODIGO,
         E.DESCUENTO,
         E.EXTRA_OTRO,
