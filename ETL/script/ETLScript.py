@@ -12,7 +12,6 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
-
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -67,7 +66,6 @@ async def columnasAuxiliares():
         "ALTER TABLE precio_con_fecha_tipo_evento ADD COLUMN id_legacy INTEGER")
 
 
-
 async def ETLUsuario():
     global usuarioLegacyRepository
     global usuarioAgendazaRepository
@@ -84,6 +82,16 @@ async def ETLUsuario():
         item.asignarIdAgendaza()
 
     usuarioLegacyRepository.saveAll(usuarioLegacyList)
+    await postUsuarioETL(usuarioAgendazaList)
+
+
+async def postUsuarioETL(usuarioAgendazaList):
+    global foreignLegacyVsNewAux
+
+    for usuarioMigrado in usuarioAgendazaList:
+        foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id[usuarioMigrado.id_usuario_legacy] = usuarioMigrado.id
+
+    print("KEY USUARIO ID_LEGACY - VALUE USUARIO_ID_AGENDAZA", foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id)
 
 
 async def ETLCliente():
@@ -97,6 +105,17 @@ async def ETLCliente():
 
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
     usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
+    await postClienteETL(usuarioAgendazaList)
+
+
+async def postClienteETL(usuarioAgendazaList):
+    global foreignLegacyVsNewAux
+
+    for usuarioItem in usuarioAgendazaList:
+        foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id[usuarioItem.id_cliente_legacy] = usuarioItem.id
+
+    print("KEY CLIENTE ID_LEGACY - VALUE USUARIO_ID_AGENDAZA",
+          foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id)
 
 
 async def ETLEmpresa():
@@ -192,8 +211,6 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
-        print("VARIABLE_CATERING - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
-              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "EVENTO":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -202,8 +219,6 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.subTipoEventoVsAExtraAgendazaList.append(idVsIdLegacy)
-        print("EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
-              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "TIPO_CATERING":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -212,8 +227,6 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.tipoCateringVsExtraAgendazaList.append(idVsIdLegacy)
-        print("TIPO_CATERING - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
-              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
     if extra.tipo_extra == "VARIABLE_EVENTO":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -222,8 +235,6 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.variableEventoVsAExtraAgendaList.append(idVsIdLegacy)
-        print("VARIABLE_EVENTO - Id_agendaza", idVsIdLegacy.id_agendaza, "id_legacy", idVsIdLegacy.id_legacy,
-              "empresa_id_agendaza", extra.empresa_id, "empresa_id_legacy", empresaLegacyId)
 
 
 async def capacidadETL():
@@ -307,8 +318,6 @@ async def postTipoEventoETL(listaTipoEventos):
         foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic[
             tipoEventoMigrado.tipo_evento_legacy] = tipoEventoMigrado.id
 
-    print("diccionarios", foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic)
-
 
 async def precioConFechaEventoRepositoryETL():
     global nativeQuerys
@@ -322,7 +331,6 @@ async def precioConFechaEventoRepositoryETL():
 
     for fechaEventoLegacy in listaDeFechaEventoLegacyRepository:
         empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(fechaEventoLegacy.empresa_id)
-        print("empresa id ",empresa_id)
         tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
             fechaEventoLegacy.tipo_evento_id)
 
@@ -338,11 +346,7 @@ async def precioConFechaEventoRepositoryETL():
 
         lista_a_migrar.append(precioConFechaEventoAMigrar)
 
-
         precioConFechaEventoRepository.saveAll(lista_a_migrar)
-
-
-
 
 
 ##############################################################################################################
@@ -368,7 +372,6 @@ async def main():
     await extraETL(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
-    print("ETL para precio con fecha extra")
     await precioConFechaExtraETL(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
     await precioConFechaExtraETL(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
     await precioConFechaExtraETL(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")
@@ -406,8 +409,6 @@ from ETL.agendaza.TipoEvento import TipoEvento
 from repositorio.TipoEventoRepository import TipoEventoRepository
 from repositorio.PrecioConFechaEventoRepository import PrecioConFechaEventoRepository
 from ETL.agendaza.PrecioConFechaEvento import PrecioConFechaEvento
-
-
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)

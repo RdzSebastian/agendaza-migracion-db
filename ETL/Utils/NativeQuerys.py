@@ -63,3 +63,26 @@ class NativeQuerys:
         WHERE PRECIO > 0
             ;
     """
+
+    queryForEvento = """
+        SELECT
+        E.ID,
+        CA.PRESUPUESTO AS CATERING_OTRO,
+        E.CODIGO AS CODIGO,
+        E.DESCUENTO,
+        E.EXTRA_OTRO,
+        E.ENDD AS FIN ,
+        E.STARTD AS INICIO,
+        E.NOMBRE ,
+        E.CAPACIDAD_ID,
+        E.CLIENTE_ID,
+        E.SALON_ID AS EMPRESA_ID ,
+        E.USUARIO_ID AS ENCARGADO_ID,
+        E.SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID
+    FROM
+        EVENTO E
+        JOIN CATERING CA ON E.CATERING_ID = CA.ID
+    ORDER BY
+        E.ID ASC
+        ;
+    """

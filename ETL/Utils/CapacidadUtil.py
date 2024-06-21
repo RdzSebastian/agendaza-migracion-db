@@ -28,7 +28,6 @@ class CapacidadUtil:
         for capacidadLegacy in capacidadesLegacy:
             idAgendaza = self.determinarElIdActualEnAgendaza(
                 capacidadLegacy)
-            print(capacidadLegacy.id ,idAgendaza )
 
             dicARetornar[capacidadLegacy.id] = idAgendaza
 
