@@ -7,7 +7,6 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
-
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -71,6 +70,9 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE PAGO ADD COLUMN pago_id_legacy INTEGER")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE SERVICIO ADD COLUMN servicio_id_legacy INTEGER")
+
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN tipo_evento_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN servicio_id_legacy INTEGER")
 
 
 async def ETLUsuario():
@@ -465,7 +467,7 @@ async def postServicioETL(serviciosMigrados):
           foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id)
 
 
-async def TipoEventoServicioETL():
+async def tipoEventoServicioETL():
     global geserveAppQueries
     global tipoEventoServicioRepository
     global nativeQuerys
@@ -474,19 +476,17 @@ async def TipoEventoServicioETL():
     listaTipoEventoServicioLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForSubTipoEventoServicio)
     listaTipoEventoServiciosAMigrar = []
 
-
     for tipoEventoServicioLegacy in listaTipoEventoServicioLegacy:
-
-        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(tipoEventoServicioLegacy.tipo_evento_id)
-        servicio_id =foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id.get(tipoEventoServicioLegacy.servicio_id)
+        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
+            tipoEventoServicioLegacy.tipo_evento_id)
+        servicio_id = foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id.get(tipoEventoServicioLegacy.servicio_id)
         tipoEventoServicioLegacyAMigrar = TipoEventoServicio(tipo_evento_id=tipo_evento_id,
                                                              servicio_id=servicio_id,
                                                              tipo_evento_id_legacy=tipoEventoServicioLegacy.tipo_evento_id,
                                                              servicio_id_legacy=tipoEventoServicioLegacy.servicio_id)
         listaTipoEventoServiciosAMigrar.append(tipoEventoServicioLegacyAMigrar)
 
-
-
+    tipoEventoServicioRepository.saveAll(listaTipoEventoServiciosAMigrar)
 
 
 ##############################################################################################################
@@ -522,6 +522,7 @@ async def main():
     await eventoETL()
     await pagoETL()
     await servicioETL()
+    await tipoEventoServicioETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()

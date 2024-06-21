@@ -41,6 +41,10 @@ try:
     queryDeleteFromList = []
 
     queryDeleteFromList.append(
+        QueryDeleteyBase(agendazaAppQueries,
+                         "DELETE FROM tipo_evento_servicio where tipo_evento_id_legacy IS NOT NULL OR servicio_id_legacy IS NOT NULL"))
+
+    queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM SERVICIO where servicio_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
@@ -80,12 +84,11 @@ try:
 
     queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM capacidad where es_migrado IS TRUE"))
 
-
-
     for item in queryDeleteFromList:
         item.borrarRegistros()
 
-
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio DROP COLUMN IF EXISTS  tipo_evento_id_legacy")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio DROP COLUMN IF EXISTS  servicio_id_legacy")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE SERVICIO DROP COLUMN IF EXISTS  servicio_id_legacy")
 
@@ -122,7 +125,6 @@ try:
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  CARGO DROP COLUMN   IF EXISTS es_legacy")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon DROP COLUMN IF EXISTS  id_agendaza")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE capacidad DROP COLUMN IF EXISTS  es_migrado")
-
 
     idUsuarioMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM usuario").scalar()
 
@@ -168,7 +170,6 @@ try:
     else:
         print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
 
-
     idCapacidadMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM capacidad").scalar()
 
     if idCapacidadMax is not None:
@@ -178,32 +179,28 @@ try:
 
     idTipoEventoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM tipo_evento").scalar()
 
-
     if idTipoEventoMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE tipo_evento_id_seq RESTART WITH {idTipoEventoMax}")
     else:
         print("No se pudo obtener el valor de idTipoEventoMax. No se reinició la secuencia.")
 
-    idPrecioConFechaTipoEventoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM precio_con_fecha_tipo_evento").scalar()
-
+    idPrecioConFechaTipoEventoMax = agendazaAppQueries.sqlNativeQuery(
+        "SELECT MAX(id)+1 FROM precio_con_fecha_tipo_evento").scalar()
 
     if idPrecioConFechaTipoEventoMax is not None:
-        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE precio_con_fecha_tipo_evento_id_seq RESTART WITH {idPrecioConFechaTipoEventoMax}")
+        agendazaAppQueries.sqlNativeQuery(
+            f"ALTER SEQUENCE precio_con_fecha_tipo_evento_id_seq RESTART WITH {idPrecioConFechaTipoEventoMax}")
     else:
         print("No se pudo obtener el valor de idPrecioConFechaTipoEventoMax. No se reinició la secuencia.")
 
-
     idEventoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM EVENTO").scalar()
-
 
     if idEventoMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE evento_id_seq RESTART WITH {idEventoMax}")
     else:
         print("No se pudo obtener el valor de idEventoMax. No se reinició la secuencia.")
 
-
     idServicioMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM SERVICIO").scalar()
-
 
     if idServicioMax is not None:
         agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE servicio_id_seq RESTART WITH {idServicioMax}")
