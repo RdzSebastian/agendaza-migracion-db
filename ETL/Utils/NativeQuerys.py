@@ -101,7 +101,6 @@ class NativeQuerys:
         JOIN MEDIO_DE_PAGO MDP ON P.MEDIO_DE_PAGO_ID = MDP.ID;
     """
 
-
     queryForServicio = """
     SELECT
         DISTINCT 
@@ -115,3 +114,12 @@ class NativeQuerys:
         JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO PCF ON PCF.SUB_TIPO_EVENTO_ID = STE.ID
     ORDER BY S.ID ASC
 ;"""
+
+    queryForSubTipoEventoServicio = """
+    SELECT
+        SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
+        SERVICIO_ID
+    FROM
+	    SUB_TIPO_EVENTO_SERVICIO;
+    
+    """

@@ -7,12 +7,9 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
-
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
-
-
 
 
 # Solo usarlo para probar que se hayan traído los datos desde la BD
@@ -431,7 +428,8 @@ async def pagoETL():
 
     pagoRepository.saveAll(listaAMigrar)
 
-async def servioETL():
+
+async def servicioETL():
     global geserveAppQueries
     global servicioRepository
     global nativeQuerys
@@ -453,8 +451,17 @@ async def servioETL():
 
     servicioRepository.saveAll(listaDeServiciosAMigrar)
 
+    await postServicioETL(listaDeServiciosAMigrar)
 
 
+async def postServicioETL(serviciosMigrados):
+    global foreignLegacyVsNewAux
+
+    for servicioMigrado in serviciosMigrados:
+        foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id[servicioMigrado.servicio_id_legacy] = servicioMigrado.id
+
+    print("KEY SERVICIO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ",
+          foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id)
 
 
 ##############################################################################################################
@@ -489,7 +496,7 @@ async def main():
     await precioConFechaEventoRepositoryETL()
     await eventoETL()
     await pagoETL()
-    await servioETL()
+    await servicioETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
