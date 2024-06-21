@@ -41,6 +41,9 @@ try:
     queryDeleteFromList = []
 
     queryDeleteFromList.append(
+        QueryDeleteyBase(agendazaAppQueries, "DELETE FROM SERVICIO where servicio_id_legacy IS NOT NULL"))
+
+    queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM PAGO where pago_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
@@ -81,6 +84,10 @@ try:
 
     for item in queryDeleteFromList:
         item.borrarRegistros()
+
+
+
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE SERVICIO DROP COLUMN IF EXISTS  servicio_id_legacy")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE PAGO DROP COLUMN IF EXISTS  pago_id_legacy")
 

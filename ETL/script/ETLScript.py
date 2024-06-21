@@ -72,6 +72,8 @@ async def columnasAuxiliares():
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE PAGO ADD COLUMN pago_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE SERVICIO ADD COLUMN servicio_id_legacy INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -431,26 +433,25 @@ async def pagoETL():
 
 async def servioETL():
     global geserveAppQueries
-    global pagoRepository
+    global servicioRepository
     global nativeQuerys
     global foreignLegacyVsNewAux
 
     listaDeServiciosLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForServicio)
-    listaAMigrar = []
+    listaDeServiciosAMigrar = []
 
     for servicioLegacy in listaDeServiciosLegacy:
         empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(servicioLegacy.empresa_id)
 
         servicioAMigrar = Servicio(fecha_baja=None,
                                    empresa_id=empresa_id,
-                                   nombre=servicioLegacy.nombre)
+                                   nombre=servicioLegacy.nombre,
+                                   servicio_id_legacy=servicioLegacy.id
+                                   )
 
-        listaAMigrar.append(servicioLegacy)
+        listaDeServiciosAMigrar.append(servicioAMigrar)
 
-
-
-
-
+    servicioRepository.saveAll(listaDeServiciosAMigrar)
 
 
 
