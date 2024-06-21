@@ -41,6 +41,9 @@ try:
     queryDeleteFromList = []
 
     queryDeleteFromList.append(
+        QueryDeleteyBase(agendazaAppQueries, "DELETE FROM PAGO where pago_id_legacy IS NOT NULL"))
+
+    queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EVENTO where evento_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
@@ -79,6 +82,8 @@ try:
     for item in queryDeleteFromList:
         item.borrarRegistros()
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE PAGO DROP COLUMN IF EXISTS  pago_id_legacy")
+
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE  EVENTO  DROP COLUMN  IF EXISTS evento_id_legacy")
 
@@ -110,6 +115,7 @@ try:
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE  CARGO DROP COLUMN   IF EXISTS es_legacy")
     geserveAppQueries.sqlNativeQuery("ALTER TABLE salon DROP COLUMN IF EXISTS  id_agendaza")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE capacidad DROP COLUMN IF EXISTS  es_migrado")
+
 
     idUsuarioMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM usuario").scalar()
 

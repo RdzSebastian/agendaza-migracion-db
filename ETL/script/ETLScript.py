@@ -67,6 +67,8 @@ async def columnasAuxiliares():
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE EVENTO ADD COLUMN evento_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE PAGO ADD COLUMN pago_id_legacy INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -416,8 +418,14 @@ async def PagoETL():
             medio_de_pago=pagoLegacy.medio_de_pago,
             monto=pagoLegacy.monto,
             encargado_id=encargado_id,
-            evento_id=evento_id)
+            evento_id=evento_id,
+            pago_id_legacy=pagoLegacy.id,
+
+        )
         listaAMigrar.append(pagoAMigrar)
+
+    pagoRepository.saveAll(listaAMigrar)
+
 
 
 ##############################################################################################################

@@ -12,11 +12,13 @@ class Pago(conexionAgendaza.Base):
     monto = Column(Integer, nullable=True)
     encargado_id = Column(BigInteger, nullable=True)
     evento_id = Column(BigInteger, nullable=True)
+    pago_id_legacy = Column(Integer)
 
-    def __init__(self, fecha=None, medio_de_pago=None, monto=None, encargado_id=None, evento_id=None):
+    def __init__(self, fecha=None, medio_de_pago=None, monto=None, encargado_id=None, evento_id=None , pago_id_legacy = None):
         self.fecha = fecha
         self.medio_de_pago = medio_de_pago
         self.monto = monto
         self.encargado_id = encargado_id
         self.evento_id = evento_id
+        self.pago_id_legacy = pago_id_legacy
 
