@@ -86,3 +86,17 @@ class NativeQuerys:
         E.ID ASC
         ;
     """
+
+    queryForPago = """
+    SELECT
+        P.ID,
+        P.FECHA AS FECHA ,
+        P.PAGO AS MONTO,
+        UPPER(MDP.NOMBRE) AS MEDIO_DE_PAGO,
+        P.USUARIO_ID AS ENCARGADO_ID,
+        P.EVENTO_ID AS EVENTO_ID
+        
+    FROM
+        PAGO P
+        JOIN MEDIO_DE_PAGO MDP ON P.MEDIO_DE_PAGO_ID = MDP.ID;
+    """
