@@ -7,10 +7,10 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
 
+
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
-
 
 
 # Solo usarlo para probar que se hayan traído los datos desde la BD
@@ -465,6 +465,30 @@ async def postServicioETL(serviciosMigrados):
           foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id)
 
 
+async def TipoEventoServicioETL():
+    global geserveAppQueries
+    global tipoEventoServicioRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+
+    listaTipoEventoServicioLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForSubTipoEventoServicio)
+    listaTipoEventoServiciosAMigrar = []
+
+
+    for tipoEventoServicioLegacy in listaTipoEventoServicioLegacy:
+
+        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(tipoEventoServicioLegacy.tipo_evento_id)
+        servicio_id =foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id.get(tipoEventoServicioLegacy.servicio_id)
+        tipoEventoServicioLegacyAMigrar = TipoEventoServicio(tipo_evento_id=tipo_evento_id,
+                                                             servicio_id=servicio_id,
+                                                             tipo_evento_id_legacy=tipoEventoServicioLegacy.tipo_evento_id,
+                                                             servicio_id_legacy=tipoEventoServicioLegacy.servicio_id)
+        listaTipoEventoServiciosAMigrar.append(tipoEventoServicioLegacyAMigrar)
+
+
+
+
+
 ##############################################################################################################
 async def main():
     global clienteReserveappRepository
@@ -535,7 +559,7 @@ from ETL.agendaza.Pago import Pago
 from repositorio.ServicioRepository import ServicioRepository
 from ETL.agendaza.Servicio import Servicio
 from repositorio.TipoEventoServicioRepository import TipoEventoServicioRepository
-
+from ETL.agendaza.TipoEventoServicio import TipoEventoServicio
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
