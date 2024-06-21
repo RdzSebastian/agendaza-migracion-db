@@ -195,6 +195,15 @@ try:
         print("No se pudo obtener el valor de idEventoMax. No se reinició la secuencia.")
 
 
+    idPagoMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM PAGO").scalar()
+
+
+    if idPagoMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE pago_id_seq RESTART WITH {idPagoMax}")
+    else:
+        print("No se pudo obtener el valor de idEventoMax. No se reinició la secuencia.")
+
+
 
 except Exception as e:
     for repositorios in repositorioList:
