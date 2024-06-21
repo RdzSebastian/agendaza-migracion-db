@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func, Boolean, Float
+from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func, Boolean, Float, DateTime
 from ETL.Conexión import conexionAgendaza
 from datetime import date
 
@@ -14,8 +14,8 @@ class Evento(conexionAgendaza.Base):
     descuento = Column(Integer)
     estado = Column(String)
     extra_otro = Column(Integer)
-    fin = Column(Date)
-    inicio = Column(Date)
+    fin = Column(DateTime, nullable=True)
+    inicio = Column(DateTime, nullable=True)
     nombre = Column(String)
     capacidad_id = Column(Integer)
     cliente_id = Column(Integer)
