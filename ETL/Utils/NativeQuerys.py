@@ -102,12 +102,12 @@ class NativeQuerys:
     """
 
 
-    queryForService = """
+    queryForServicio = """
     SELECT
         DISTINCT 
         S.ID,
         S.NOMBRE ,
-        PCF.SALON_ID
+        PCF.SALON_ID AS EMPRESA_ID
         
     FROM SERVICIO S
         JOIN SUB_TIPO_EVENTO_SERVICIO STES ON S.ID = STES.SERVICIO_ID

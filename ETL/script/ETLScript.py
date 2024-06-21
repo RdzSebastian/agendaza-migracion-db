@@ -12,6 +12,8 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
+
+
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -494,6 +496,7 @@ from repositorio.EventoRepository import EventoRepository
 from ETL.agendaza.Evento import Evento
 from repositorio.PagoRepository import PagoRepository
 from ETL.agendaza.Pago import Pago
+from repositorio.ServicioRepository import ServicioRepository
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -520,6 +523,7 @@ tipoEventoRepository = TipoEventoRepository(conexionAgendaza.session)
 precioConFechaEventoRepository = PrecioConFechaEventoRepository(conexionAgendaza.session)
 eventoRepository = EventoRepository(conexionAgendaza.session)
 pagoRepository = PagoRepository(conexionAgendaza.session)
+servicioRepository = ServicioRepository(conexionAgendaza.session)
 
 # Ejecutar el bucle principal
 asyncio.run(main())
