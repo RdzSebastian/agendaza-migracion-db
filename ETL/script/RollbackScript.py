@@ -42,6 +42,10 @@ try:
 
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries,
+                         "DELETE FROM evento_extra_variable where id_legacy IS NOT NULL"))
+
+    queryDeleteFromList.append(
+        QueryDeleteyBase(agendazaAppQueries,
                          "DELETE FROM tipo_evento_servicio where tipo_evento_id_legacy IS NOT NULL OR servicio_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
@@ -87,6 +91,7 @@ try:
     for item in queryDeleteFromList:
         item.borrarRegistros()
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra_variable DROP COLUMN IF EXISTS  id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio DROP COLUMN IF EXISTS  tipo_evento_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio DROP COLUMN IF EXISTS  servicio_id_legacy")
 

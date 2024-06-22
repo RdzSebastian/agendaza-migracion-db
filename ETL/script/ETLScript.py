@@ -74,6 +74,8 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN tipo_evento_id_legacy INTEGER")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN servicio_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra_variable ADD COLUMN id_legacy INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -506,14 +508,16 @@ async def eventoExtraVariable():
 
     for eventoExtraVariableLegacy in listaEventoExtraVaraibleLegacy:
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.evento_id)
-        extra_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.extra_id)
+        extra_id = foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.extra_id)
 
         eventoExtraVariableLegacyAMigrar = EventoExtraVariable(cantidad=eventoExtraVariableLegacy.cantidad,
                                                                evento_id=evento_id,
-                                                               extra_id=extra_id)
+                                                               extra_id=extra_id,
+                                                               id_legacy=eventoExtraVariableLegacy.id)
 
         listaEventoExtraVariableAMigrar.append(eventoExtraVariableLegacyAMigrar)
 
+    eventoExtraVariableRepository.saveAll(listaEventoExtraVariableAMigrar)
 
 
 

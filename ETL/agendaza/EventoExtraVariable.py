@@ -10,9 +10,11 @@ class EventoExtraVariable(conexionAgendaza.Base):
     cantidad = Column(Integer, nullable=False)
     evento_id = Column(BigInteger, nullable=False)
     extra_id = Column(BigInteger, nullable=False)
+    id_legacy = Column(BigInteger)
 
-    def __init__(self, cantidad, evento_id, extra_id):
+    def __init__(self, cantidad, evento_id, extra_id ,id_legacy):
         self.cantidad = cantidad
         self.evento_id = evento_id
         self.extra_id = extra_id
+        self.id_legacy = id_legacy
 
