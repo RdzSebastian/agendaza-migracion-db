@@ -123,3 +123,13 @@ class NativeQuerys:
 	    SUB_TIPO_EVENTO_SERVICIO;
     
     """
+
+    queryForEventoExtraVariable = """
+    SELECT
+        ID,
+        CANTIDAD,
+        EVENTO_ID,
+        EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID AS EXTRA_ID
+    FROM
+        EVENTO_EXTRA_VARIABLE_SUB_TIPO_EVENTO;
+    """
