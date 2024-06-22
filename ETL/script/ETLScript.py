@@ -245,6 +245,8 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.variableEventoVsAExtraAgendaList.append(idVsIdLegacy)
+        foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id[
+            extra.extra_variable_sub_tipo_evento_id_legacy] = extra.id
 
 
 async def capacidadETL():
@@ -492,13 +494,33 @@ async def tipoEventoServicioETL():
     tipoEventoServicioRepository.saveAll(listaTipoEventoServiciosAMigrar)
 
 
-##############################################################################################################
-async def main():
-    global clienteReserveappRepository
-    global usuarioLegacyRepository
-    global usuarioAgendazaRepository
+async def eventoExtraVariable():
+    global geserveAppQueries
     global nativeQuerys
     global foreignLegacyVsNewAux
+    global eventoExtraVariableRepository
+
+    listaEventoExtraVaraibleLegacy = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEventoExtraVariable)
+
+    listaEventoExtraVariableAMigrar = []
+
+    for eventoExtraVariableLegacy in listaEventoExtraVaraibleLegacy:
+        evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.evento_id)
+        extra_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.extra_id)
+
+        eventoExtraVariableLegacyAMigrar = EventoExtraVariable(cantidad=eventoExtraVariableLegacy.cantidad,
+                                                               evento_id=evento_id,
+                                                               extra_id=extra_id)
+
+        listaEventoExtraVariableAMigrar.append(eventoExtraVariableLegacyAMigrar)
+
+
+
+
+##############################################################################################################
+async def main():
+    global foreignLegacyVsNewAux
+    global nativeQuerys
     global precioConFechaExtraVariableCateringRepository
     global precioConFechaExtraSubTipoEventoRepository
     global precioConFechaExtraTipoCateringRepository
@@ -526,6 +548,7 @@ async def main():
     await pagoETL()
     await servicioETL()
     await tipoEventoServicioETL()
+    await eventoExtraVariable()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -564,6 +587,8 @@ from repositorio.ServicioRepository import ServicioRepository
 from ETL.agendaza.Servicio import Servicio
 from repositorio.TipoEventoServicioRepository import TipoEventoServicioRepository
 from ETL.agendaza.TipoEventoServicio import TipoEventoServicio
+from repositorio.EventoExtraVariableRepository import EventoExtraVariableRepository
+from ETL.agendaza.EventoExtraVariable import EventoExtraVariable
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -592,6 +617,7 @@ eventoRepository = EventoRepository(conexionAgendaza.session)
 pagoRepository = PagoRepository(conexionAgendaza.session)
 servicioRepository = ServicioRepository(conexionAgendaza.session)
 tipoEventoServicioRepository = TipoEventoServicioRepository(conexionAgendaza.session)
+eventoExtraVariableRepository = EventoExtraVariableRepository(conexionAgendaza.session)
 
 # Ejecutar el bucle principal
 asyncio.run(main())

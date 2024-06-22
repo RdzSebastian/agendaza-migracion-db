@@ -4,6 +4,7 @@ class ForeignLegacyVsNewAux:
     cliente_id_legacy_vs_agendaza_id = {}
     evento_id_legacy_vs_agendaza_id = {}
     servicio_id_legacy_vs_agendaza_id = {}
+    variable_evento_id_legacy_vs_agendaza_id = {}
 
     variableCateringVsAExtraAgendazaList = []
     subTipoEventoVsAExtraAgendazaList = []
