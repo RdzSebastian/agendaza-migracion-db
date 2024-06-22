@@ -202,7 +202,7 @@ async def duplicarExtrasMigradosParaEmpresaDiferente():
 
         for valor in listaDeEmpresa_Id:
             nuevoExtra = Extra(nombre=extra.nombre, tipo_extra=extra.tipo_extra)
-            nuevoExtra.empresa_id =valor
+            nuevoExtra.empresa_id = valor
 
             nuevoExtra.extra_variable_catering_id_legacy = extra.extra_variable_catering_id_legacy
             nuevoExtra.extra_sub_tipo_evento_id_legacy = extra.extra_sub_tipo_evento_id_legacy
@@ -212,12 +212,6 @@ async def duplicarExtrasMigradosParaEmpresaDiferente():
             listaADeNuevosExtrasPorDuplicacion.append(nuevoExtra)
 
     extraRepository.saveAll(listaADeNuevosExtrasPorDuplicacion)
-
-
-
-
-
-
 
 
 async def precioConFechaExtraETL(repository, tipo):
