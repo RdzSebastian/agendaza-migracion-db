@@ -12,6 +12,7 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
+
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -231,6 +232,9 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.subTipoEventoVsAExtraAgendazaList.append(idVsIdLegacy)
+        foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id[
+            extra.extra_sub_tipo_evento_id_legacy] = extra.id
+
 
     if extra.tipo_extra == "TIPO_CATERING":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -247,7 +251,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.variableEventoVsAExtraAgendaList.append(idVsIdLegacy)
-        foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id[
+        foreignLegacyVsNewAux.extra_variable_evento_id_legacy_vs_agendaza_id[
             extra.extra_variable_sub_tipo_evento_id_legacy] = extra.id
 
 
@@ -400,6 +404,13 @@ async def eventoETL():
     eventoRepository.saveAll(eventosAMigrar)
     await postEventoETL(eventosAMigrar)
 
+async def eventoExtra():
+    global foreignLegacyVsNewAux
+    global geserveAppQueries
+    global nativeQuerys
+    global eventoRepository
+
+
 
 async def postEventoETL(listaDeEventosMigrados):
     global foreignLegacyVsNewAux
@@ -508,7 +519,7 @@ async def eventoExtraVariable():
 
     for eventoExtraVariableLegacy in listaEventoExtraVaraibleLegacy:
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.evento_id)
-        extra_id = foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id.get(
+        extra_id = foreignLegacyVsNewAux.extra_variable_evento_id_legacy_vs_agendaza_id.get(
             eventoExtraVariableLegacy.extra_id)
 
         eventoExtraVariableLegacyAMigrar = EventoExtraVariable(cantidad=eventoExtraVariableLegacy.cantidad,
@@ -519,6 +530,26 @@ async def eventoExtraVariable():
         listaEventoExtraVariableAMigrar.append(eventoExtraVariableLegacyAMigrar)
 
     eventoExtraVariableRepository.saveAll(listaEventoExtraVariableAMigrar)
+
+
+async def eventoExtraETL():
+    global geserveAppQueries
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+    global eventoExtraRepository
+
+    listaEventoExtraLegacyAMigrar = geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEventoExtraSubTipoEvento)
+
+    listaAMigrar = []
+
+    for eventoExtraLegacy in listaEventoExtraLegacyAMigrar:
+        evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.evento_id)
+        extra_id = foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.extra_id)
+        eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id)
+        listaAMigrar.append(eventoExtraAMigrar)
+
+
+
 
 
 ##############################################################################################################
@@ -553,6 +584,7 @@ async def main():
     await servicioETL()
     await tipoEventoServicioETL()
     await eventoExtraVariable()
+    await eventoExtraETL()
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -593,6 +625,10 @@ from repositorio.TipoEventoServicioRepository import TipoEventoServicioRepositor
 from ETL.agendaza.TipoEventoServicio import TipoEventoServicio
 from repositorio.EventoExtraVariableRepository import EventoExtraVariableRepository
 from ETL.agendaza.EventoExtraVariable import EventoExtraVariable
+from repositorio.EventoExtraRepository import EventoExtraRepository
+from ETL.agendaza.EventoExtra import EventoExtra
+
+
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -622,6 +658,7 @@ pagoRepository = PagoRepository(conexionAgendaza.session)
 servicioRepository = ServicioRepository(conexionAgendaza.session)
 tipoEventoServicioRepository = TipoEventoServicioRepository(conexionAgendaza.session)
 eventoExtraVariableRepository = EventoExtraVariableRepository(conexionAgendaza.session)
+eventoExtraRepository = EventoExtraRepository(conexionAgendaza.session)
 
 # Ejecutar el bucle principal
 asyncio.run(main())
