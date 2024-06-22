@@ -7,7 +7,9 @@ class NativeQuerys:
         JOIN CATERING_EXTRA_VARIABLE_CATERING CEXTRA ON EXTRA.ID = CEXTRA.EXTRA_VARIABLE_CATERING_ID
         JOIN CATERING CA ON CA.ID =  CEXTRA.CATERING_ID
         JOIN EVENTO E ON E.CATERING_ID = CA.ID
-    UNION
+	WHERE E.SALON_ID IS NOT NULL
+    
+	UNION
         
     SELECT DISTINCT
         ETC.ID AS ID,
@@ -29,6 +31,7 @@ class NativeQuerys:
             EXTRA_SUB_TIPO_EVENTO EXTRA
             JOIN EVENTO_EXTRA_SUB_TIPO_EVENTO NM ON EXTRA.ID = NM.EXTRA_SUB_TIPO_EVENTO_ID
             JOIN EVENTO E ON E.ID = NM.EVENTO_ID
+		WHERE E.SALON_ID IS NOT NULL
         
         UNION 
         
@@ -42,6 +45,7 @@ class NativeQuerys:
         
         ORDER BY
             ID ASC;
+
         """
 
     queryTipoCatering = """
@@ -65,6 +69,7 @@ class NativeQuerys:
             JOIN CATERING CA ON NM.CATERING_ID = CA.ID
             JOIN EVENTO E ON E.CATERING_ID = CA.ID
             WHERE E.SALON_ID IS NOT NULL
+        ORDER BY ID ASC
             ;
         """
 
@@ -87,8 +92,8 @@ class NativeQuerys:
             EXTRA_VARIABLE_SUB_TIPO_EVENTO EXTRA
             JOIN EVENTO_EXTRA_VARIABLE_SUB_TIPO_EVENTO EEXTRA ON EEXTRA.EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID =EXTRA.ID
             JOIN EVENTO E ON E.ID = EEXTRA.EVENTO_ID
-            WHERE E.SALON_ID IS NOT NULL;
-
+            WHERE E.SALON_ID IS NOT NULL
+        ORDER BY ID ASC;
         """
 
     queryForCargoETL = query = """
