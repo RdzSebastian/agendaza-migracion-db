@@ -1,8 +1,24 @@
 class NativeQuerys:
-    queryVARIABLE_CATERING = """select distinct etc.id as id ,etc.nombre as nombre , 'VARIABLE_CATERING' as tipoExtra , extra.salon_id as empresa_id 
-    	from extra_variable_catering etc 
-    	join precio_con_fecha_extra_variable_catering extra 
-    	on etc.id = extra_variable_catering_id;"""
+    queryVARIABLE_CATERING = """
+    SELECT
+        DISTINCT EXTRA.ID , EXTRA.NOMBRE , E.SALON_ID AS EMPRESA_ID
+    FROM
+        EXTRA_VARIABLE_CATERING EXTRA
+        JOIN CATERING_EXTRA_VARIABLE_CATERING CEXTRA ON EXTRA.ID = CEXTRA.EXTRA_VARIABLE_CATERING_ID
+        JOIN CATERING CA ON CA.ID =  CEXTRA.CATERING_ID
+        JOIN EVENTO E ON E.CATERING_ID = CA.ID
+    UNION
+        
+    SELECT DISTINCT
+        ETC.ID AS ID,
+        ETC.NOMBRE AS NOMBRE,
+        EXTRA.SALON_ID AS EMPRESA_ID
+    FROM
+        EXTRA_VARIABLE_CATERING ETC
+        JOIN PRECIO_CON_FECHA_EXTRA_VARIABLE_CATERING EXTRA ON ETC.ID = EXTRA_VARIABLE_CATERING_ID
+    ORDER BY ID ASC
+	;
+    """
 
     querySubTipoEvento = """ 
         SELECT DISTINCT
@@ -29,15 +45,50 @@ class NativeQuerys:
         """
 
     queryTipoCatering = """
-        select distinct este.id as id ,este.nombre as nombre  , extra.salon_id as empresa_id
-    	from tipo_catering este 
-    	join precio_con_fecha_tipo_catering extra  on este.id = extra.tipo_catering_id ; 
+        SELECT DISTINCT
+            ESTE.ID AS ID,
+            ESTE.NOMBRE AS NOMBRE,
+            EXTRA.SALON_ID AS EMPRESA_ID
+        FROM
+            TIPO_CATERING ESTE
+            JOIN PRECIO_CON_FECHA_TIPO_CATERING EXTRA ON ESTE.ID = EXTRA.TIPO_CATERING_ID
+        
+        UNION
+        
+        SELECT
+            DISTINCT EXTRA.ID AS ID,
+            EXTRA.NOMBRE,
+            E.SALON_ID AS EMPRESA_ID
+        FROM
+            TIPO_CATERING EXTRA
+            JOIN CATERING_TIPO_CATERING NM ON EXTRA.ID = NM.TIPO_CATERING_ID
+            JOIN CATERING CA ON NM.CATERING_ID = CA.ID
+            JOIN EVENTO E ON E.CATERING_ID = CA.ID
+            WHERE E.SALON_ID IS NOT NULL
+            ;
         """
 
     queryVariable_Evento = """  	
-        select distinct este.id as id ,este.nombre  as nombre , extra.salon_id as empresa_id
-    	from extra_variable_sub_tipo_evento este 
-    	join precio_con_fecha_extra_variable_sub_tipo_evento extra  on este.id = extra.extra_variable_sub_tipo_evento_id; 
+       SELECT DISTINCT
+            ESTE.ID AS ID,
+            ESTE.NOMBRE AS NOMBRE,
+            EXTRA.SALON_ID AS EMPRESA_ID
+        FROM
+            EXTRA_VARIABLE_SUB_TIPO_EVENTO ESTE
+            JOIN PRECIO_CON_FECHA_EXTRA_VARIABLE_SUB_TIPO_EVENTO EXTRA ON ESTE.ID = EXTRA.EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID
+        
+        UNION
+        
+        SELECT DISTINCT 
+            EXTRA.ID AS ID,
+            EXTRA.NOMBRE AS NOMBRE,
+            E.SALON_ID AS EMPRESA_ID
+        FROM
+            EXTRA_VARIABLE_SUB_TIPO_EVENTO EXTRA
+            JOIN EVENTO_EXTRA_VARIABLE_SUB_TIPO_EVENTO EEXTRA ON EEXTRA.EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID =EXTRA.ID
+            JOIN EVENTO E ON E.ID = EEXTRA.EVENTO_ID
+            WHERE E.SALON_ID IS NOT NULL;
+
         """
 
     queryForCargoETL = query = """
@@ -152,7 +203,6 @@ class NativeQuerys:
     FROM
         EVENTO_EXTRA_VARIABLE_SUB_TIPO_EVENTO;
     """
-
 
     queryForEventoExtraSubTipoEvento = """
     SELECT

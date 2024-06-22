@@ -176,8 +176,6 @@ async def extraETL(query, foreignLegacyVsNewAux, tipo):
     extraReturn = []
 
     for row in extraList:
-        if tipo == "EVENTO" :
-            print("el ID SUB TIPO EVENTO",row.id)
         extra = Extra(nombre=row.nombre, tipo_extra=tipo)
         extra.empresa_id = empresa_id_id_legacy.get(row.empresa_id)
         await definirQueIdSetear(extra, row.id)
@@ -194,7 +192,6 @@ async def precioConFechaExtraETL(repository, tipo):
     precioConHoraAgendazaList = []
 
     for precioConHora in precioConHoraLegacy:
-
         empresa_id, extra_id = foreignLegacyVsNewAux.obtenerFKS(precioConHora.salon_id, precioConHora.idLegacy(), tipo)
         precioConHora.empresa_id = empresa_id
         precioConHora.extra_id = extra_id
@@ -541,9 +538,8 @@ async def eventoExtraETL():
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.evento_id)
         extra_id = foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.extra_id)
 
-        if extra_id is None :
-            print("id legacy",eventoExtraLegacy.extra_id,"id_agendaza",extra_id)
-
+        if extra_id is None:
+            print("id legacy", eventoExtraLegacy.extra_id, "id_agendaza", extra_id)
 
         eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id,
                                          evento_id_legacy=eventoExtraLegacy.evento_id,
