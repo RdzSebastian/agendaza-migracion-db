@@ -184,6 +184,42 @@ async def extraETL(query, foreignLegacyVsNewAux, tipo):
         await setNewforeignLegacyVsNewAux(extra, row.id, row.empresa_id)
 
 
+async def duplicarExtrasMigradosParaEmpresaDiferente():
+    global extraRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+
+    listaDeExtrasNoDuplicadas = extraRepository.sqlNativeQuery(
+        nativeQuerys.queryForExtrasMigradosNoDuplicadosAgendaza)
+
+    valores = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.values()
+
+    listaADeNuevosExtrasPorDuplicacion = []
+
+    for extra in listaDeExtrasNoDuplicadas:
+        listaDeEmpresa_Id = list(valores)
+        listaDeEmpresa_Id.remove(extra.empresa_id)
+
+        for valor in listaDeEmpresa_Id:
+            nuevoExtra = Extra(nombre=extra.nombre, tipo_extra=extra.tipo_extra)
+            nuevoExtra.empresa_id =valor
+
+            nuevoExtra.extra_variable_catering_id_legacy = extra.extra_variable_catering_id_legacy
+            nuevoExtra.extra_sub_tipo_evento_id_legacy = extra.extra_sub_tipo_evento_id_legacy
+            nuevoExtra.tipo_catering_id_legacy = extra.tipo_catering_id_legacy
+            nuevoExtra.extra_variable_sub_tipo_evento_id_legacy = extra.extra_variable_sub_tipo_evento_id_legacy
+
+            listaADeNuevosExtrasPorDuplicacion.append(nuevoExtra)
+
+    extraRepository.saveAll(listaADeNuevosExtrasPorDuplicacion)
+
+
+
+
+
+
+
+
 async def precioConFechaExtraETL(repository, tipo):
     global foreignLegacyVsNewAux
     global precioConFechaExtraRepository
@@ -569,6 +605,7 @@ async def main():
     await extraETL(nativeQuerys.querySubTipoEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
+    await duplicarExtrasMigradosParaEmpresaDiferente()
     await precioConFechaExtraETL(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
     await precioConFechaExtraETL(precioConFechaExtraSubTipoEventoRepository, "EVENTO")
     await precioConFechaExtraETL(precioConFechaExtraTipoCateringRepository, "TIPO_CATERING")

@@ -96,6 +96,39 @@ class NativeQuerys:
         ORDER BY ID ASC;
         """
 
+
+    queryForExtrasMigradosNoDuplicadosAgendaza = """
+    SELECT
+        NOMBRE,
+        TIPO_EXTRA,
+        EMPRESA_ID,
+        EXTRA_VARIABLE_CATERING_ID_LEGACY,
+        EXTRA_SUB_TIPO_EVENTO_ID_LEGACY,
+        TIPO_CATERING_ID_LEGACY,
+        EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID_LEGACY
+    FROM
+        EXTRA
+    WHERE
+        NOMBRE IN (
+            SELECT
+                NOMBRE
+            FROM
+                EXTRA
+            WHERE
+                EXTRA_VARIABLE_CATERING_ID_LEGACY IS NOT NULL
+                OR EXTRA_SUB_TIPO_EVENTO_ID_LEGACY IS NOT NULL
+                OR TIPO_CATERING_ID_LEGACY IS NOT NULL
+                OR EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID_LEGACY IS NOT NULL
+            GROUP BY
+                NOMBRE,
+                TIPO_EXTRA
+            HAVING
+                COUNT(*) = 1
+	)
+
+
+    """
+
     queryForCargoETL = query = """
     SELECT u.id_Agendaza AS usuario_id, r.id, r.nombre AS tipo_cargo, s.id AS empresa_id
     FROM usuario u
