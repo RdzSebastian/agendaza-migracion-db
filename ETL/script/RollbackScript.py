@@ -212,6 +212,13 @@ try:
     else:
         print("No se pudo obtener el valor de idServicioMax. No se reinició la secuencia.")
 
+    idEventoExtraVariableMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM evento_extra_variable").scalar()
+
+    if idServicioMax is not None:
+        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE evento_extra_variable_id_seq RESTART WITH {idEventoExtraVariableMax}")
+    else:
+        print("No se pudo obtener el valor de idServicioMax. No se reinició la secuencia.")
+
 
 
 except Exception as e:
