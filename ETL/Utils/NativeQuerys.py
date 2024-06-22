@@ -4,9 +4,28 @@ class NativeQuerys:
     	join precio_con_fecha_extra_variable_catering extra 
     	on etc.id = extra_variable_catering_id;"""
 
-    queryEvento = """ 
-        select distinct este.id as id,este.nombre as nombre  , extra.salon_id as empresa_id from extra_sub_tipo_evento este 
-    	join precio_con_fecha_extra_sub_tipo_evento extra  on este.id = extra.extra_sub_tipo_evento_id ;
+    querySubTipoEvento = """ 
+        SELECT DISTINCT
+            EXTRA.ID,
+            EXTRA.NOMBRE,
+            E.SALON_ID AS EMPRESA_ID
+        FROM
+            EXTRA_SUB_TIPO_EVENTO EXTRA
+            JOIN EVENTO_EXTRA_SUB_TIPO_EVENTO NM ON EXTRA.ID = NM.EXTRA_SUB_TIPO_EVENTO_ID
+            JOIN EVENTO E ON E.ID = NM.EVENTO_ID
+        
+        UNION 
+        
+        SELECT DISTINCT
+            ESTE.ID AS ID,
+            ESTE.NOMBRE AS NOMBRE,
+            EXTRA.SALON_ID AS EMPRESA_ID
+        FROM
+            EXTRA_SUB_TIPO_EVENTO ESTE
+            JOIN PRECIO_CON_FECHA_EXTRA_SUB_TIPO_EVENTO EXTRA ON ESTE.ID = EXTRA.EXTRA_SUB_TIPO_EVENTO_ID
+        
+        ORDER BY
+            ID ASC;
         """
 
     queryTipoCatering = """

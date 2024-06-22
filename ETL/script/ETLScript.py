@@ -12,7 +12,6 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 
-
 # Solo usarlo para probar que se hayan traído los datos desde la BD
 # EJEMPLO -> visualizar(usuarioLegacyList) donde usuarioLegacyList es una lista de usuariosLegacy extraído desde la BD utilizando
 # sqlalchemy como ORM
@@ -76,6 +75,8 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN servicio_id_legacy INTEGER")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra_variable ADD COLUMN id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra ADD COLUMN evento_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra ADD COLUMN extra_id_legacy INTEGER")
 
 
 async def ETLUsuario():
@@ -175,6 +176,8 @@ async def extraETL(query, foreignLegacyVsNewAux, tipo):
     extraReturn = []
 
     for row in extraList:
+        if tipo == "EVENTO" :
+            print("el ID SUB TIPO EVENTO",row.id)
         extra = Extra(nombre=row.nombre, tipo_extra=tipo)
         extra.empresa_id = empresa_id_id_legacy.get(row.empresa_id)
         await definirQueIdSetear(extra, row.id)
@@ -191,6 +194,7 @@ async def precioConFechaExtraETL(repository, tipo):
     precioConHoraAgendazaList = []
 
     for precioConHora in precioConHoraLegacy:
+
         empresa_id, extra_id = foreignLegacyVsNewAux.obtenerFKS(precioConHora.salon_id, precioConHora.idLegacy(), tipo)
         precioConHora.empresa_id = empresa_id
         precioConHora.extra_id = extra_id
@@ -232,9 +236,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.subTipoEventoVsAExtraAgendazaList.append(idVsIdLegacy)
-        foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id[
-            extra.extra_sub_tipo_evento_id_legacy] = extra.id
-
+        foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id[idLegacy] = extra.id
 
     if extra.tipo_extra == "TIPO_CATERING":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -404,13 +406,6 @@ async def eventoETL():
     eventoRepository.saveAll(eventosAMigrar)
     await postEventoETL(eventosAMigrar)
 
-async def eventoExtra():
-    global foreignLegacyVsNewAux
-    global geserveAppQueries
-    global nativeQuerys
-    global eventoRepository
-
-
 
 async def postEventoETL(listaDeEventosMigrados):
     global foreignLegacyVsNewAux
@@ -545,11 +540,17 @@ async def eventoExtraETL():
     for eventoExtraLegacy in listaEventoExtraLegacyAMigrar:
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.evento_id)
         extra_id = foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.extra_id)
-        eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id)
+
+        if extra_id is None :
+            print("id legacy",eventoExtraLegacy.extra_id,"id_agendaza",extra_id)
+
+
+        eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id,
+                                         evento_id_legacy=eventoExtraLegacy.evento_id,
+                                         extra_id_legacy=eventoExtraLegacy.extra_id)
         listaAMigrar.append(eventoExtraAMigrar)
 
-
-
+    eventoExtraRepository.saveAll(listaAMigrar)
 
 
 ##############################################################################################################
@@ -569,7 +570,7 @@ async def main():
     foreignLegacyVsNewAux.setEmpresaIds(listaEmpresa)
 
     await extraETL(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
-    await extraETL(nativeQuerys.queryEvento, foreignLegacyVsNewAux, "EVENTO")
+    await extraETL(nativeQuerys.querySubTipoEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
     await precioConFechaExtraETL(precioConFechaExtraVariableCateringRepository, "VARIABLE_CATERING")
@@ -627,8 +628,6 @@ from repositorio.EventoExtraVariableRepository import EventoExtraVariableReposit
 from ETL.agendaza.EventoExtraVariable import EventoExtraVariable
 from repositorio.EventoExtraRepository import EventoExtraRepository
 from ETL.agendaza.EventoExtra import EventoExtra
-
-
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
