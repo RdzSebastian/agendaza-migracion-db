@@ -508,7 +508,8 @@ async def eventoExtraVariable():
 
     for eventoExtraVariableLegacy in listaEventoExtraVaraibleLegacy:
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.evento_id)
-        extra_id = foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id.get(eventoExtraVariableLegacy.extra_id)
+        extra_id = foreignLegacyVsNewAux.variable_evento_id_legacy_vs_agendaza_id.get(
+            eventoExtraVariableLegacy.extra_id)
 
         eventoExtraVariableLegacyAMigrar = EventoExtraVariable(cantidad=eventoExtraVariableLegacy.cantidad,
                                                                evento_id=evento_id,
@@ -518,7 +519,6 @@ async def eventoExtraVariable():
         listaEventoExtraVariableAMigrar.append(eventoExtraVariableLegacyAMigrar)
 
     eventoExtraVariableRepository.saveAll(listaEventoExtraVariableAMigrar)
-
 
 
 ##############################################################################################################
