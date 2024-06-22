@@ -22,3 +22,12 @@ class Pago(conexionAgendaza.Base):
         self.evento_id = evento_id
         self.pago_id_legacy = pago_id_legacy
 
+
+
+    def correccionMedioDePago(self):
+        if self.medio_de_pago == "TARJETA DE CREDITO":
+            self.medio_de_pago ="TARJETA_DE_CREDITO"
+
+        if self.medio_de_pago == "TARJETA DE DEBITO":
+            self.medio_de_pago = "TARJETA_DE_DEBITO"
+

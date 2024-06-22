@@ -159,6 +159,7 @@ async def cargoETL(empresalist):
         )
 
         cargo.setEmpresaId(list, row.empresa_id)
+        cargo.correccionTipoCargo()
         cargos.append(cargo)
 
     cargoRepository.saveAll(cargos)
@@ -427,6 +428,8 @@ async def pagoETL():
             pago_id_legacy=pagoLegacy.id,
 
         )
+        pagoAMigrar.correccionMedioDePago()
+
         listaAMigrar.append(pagoAMigrar)
 
     pagoRepository.saveAll(listaAMigrar)

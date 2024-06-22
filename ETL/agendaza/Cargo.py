@@ -22,3 +22,8 @@ class Cargo(conexionAgendaza.Base):
         for empresa in empresaList:
             if empresa.id_legacy == salon_id_legacy:
                 self.empresa_id = empresa.id
+
+    def correccionTipoCargo(self):
+        if self.tipo_cargo == "USER":
+            self.tipo_cargo = "ENCARGADO"
+
