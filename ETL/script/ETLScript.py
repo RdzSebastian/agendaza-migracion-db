@@ -78,6 +78,9 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra ADD COLUMN evento_id_legacy INTEGER")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra ADD COLUMN extra_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN tipo_evento_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_tipo_catering_id_legacy INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -272,6 +275,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.tipoCateringVsExtraAgendazaList.append(idVsIdLegacy)
+        foreignLegacyVsNewAux.extra_tipo_catering_id_legacy_vs_agendaza_id[idLegacy] = extra.id
 
     if extra.tipo_extra == "VARIABLE_EVENTO":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -568,8 +572,7 @@ async def eventoExtraETL():
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.evento_id)
         extra_id = foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.extra_id)
 
-        if extra_id is None:
-            print("id legacy", eventoExtraLegacy.extra_id, "id_agendaza", extra_id)
+
 
         eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id,
                                          evento_id_legacy=eventoExtraLegacy.evento_id,
@@ -586,14 +589,23 @@ async def tipoEventoExtraETL(query, tipo):
     global tipoEventoExtraRepository
 
     listaAMigrar = geserveAppQueries.sqlNativeQuery(query)
+    listaAGuardar = []
 
     for tipoEventoExtraLegacy in listaAMigrar:
         tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
             tipoEventoExtraLegacy.tipo_evento_id)
 
+
+        extra_id = foreignLegacyVsNewAux.obtenerFKExtraSegunIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
+
         tipoEventoExtraLegacyAMigrar = TipoEventoExtra(tipo_evento_id=tipo_evento_id,
-                                                       tipo_evento_id_legacy=tipoEventoExtraLegacy.tipo_evento_id)
+                                                       tipo_evento_id_legacy=tipoEventoExtraLegacy.tipo_evento_id,
+                                                       extra_id=extra_id)
+
         tipoEventoExtraLegacyAMigrar.asignarIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
+        listaAGuardar.append(tipoEventoExtraLegacyAMigrar)
+
+    tipoEventoExtraRepository.saveAll(listaAGuardar)
 
 
 ##############################################################################################################

@@ -40,6 +40,9 @@ try:
 
     queryDeleteFromList = []
 
+    queryDeleteFromList.append(
+        QueryDeleteyBase(agendazaAppQueries,
+                         "DELETE FROM tipo_evento_extra where tipo_evento_id_legacy IS NOT NULL OR extra_tipo_catering_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries,
@@ -95,6 +98,11 @@ try:
 
     for item in queryDeleteFromList:
         item.borrarRegistros()
+
+    agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  tipo_evento_id_legacy")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  extra_tipo_catering_id_legacy")
+
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra DROP COLUMN IF EXISTS  evento_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra DROP COLUMN IF EXISTS  extra_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra_variable DROP COLUMN IF EXISTS  id_legacy")
@@ -221,7 +229,8 @@ try:
     idEventoExtraVariableMax = agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM evento_extra_variable").scalar()
 
     if idServicioMax is not None:
-        agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE evento_extra_variable_id_seq RESTART WITH {idEventoExtraVariableMax}")
+        agendazaAppQueries.sqlNativeQuery(
+            f"ALTER SEQUENCE evento_extra_variable_id_seq RESTART WITH {idEventoExtraVariableMax}")
     else:
         print("No se pudo obtener el valor de idServicioMax. No se reinició la secuencia.")
 

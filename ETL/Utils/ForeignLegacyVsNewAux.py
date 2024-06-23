@@ -4,8 +4,7 @@ class ForeignLegacyVsNewAux:
     cliente_id_legacy_vs_agendaza_id = {}
     evento_id_legacy_vs_agendaza_id = {}
     servicio_id_legacy_vs_agendaza_id = {}
-    extra_variable_evento_id_legacy_vs_agendaza_id = {}
-    extra_sub_tipo_evento_id_legacy_vs_agendaza_id = {}
+
 
     variableCateringVsAExtraAgendazaList = []
     subTipoEventoVsAExtraAgendazaList = []
@@ -14,11 +13,21 @@ class ForeignLegacyVsNewAux:
     capacidadIdLegacyCapacidadIdAgendazaDic = {}
     tipoEventoIdLegacyTipoEventoIdAgendazaDic = {}
 
+    extra_tipo_catering_id_legacy_vs_agendaza_id = {}
+    extra_variable_evento_id_legacy_vs_agendaza_id = {}
+    extra_sub_tipo_evento_id_legacy_vs_agendaza_id = {}
+
 
     def setEmpresaIds(self, empresaList):
         for item in empresaList:
             self.empresa_id_legacy_vs_agendaza_id[item.id_legacy] = item.id
 
+    #Mal planteado pero aun asi funciona y lo hace de manera exelente.
+    # Los diccionarios fueron mejor solucion pero se  pensaron e implementaron muy tarde
+    #Los diccionarios mencionados son
+    # extra_tipo_catering_id_legacy_vs_agendaza_id = {}
+    #extra_variable_evento_id_legacy_vs_agendaza_id = {}
+    # extra_sub_tipo_evento_id_legacy_vs_agendaza_id = {}
     def obtenerFKS(self, empresa_id_legacy, extra_id_legacy, tipo):
         empresa_id_retorno = None
         extra_id_retorno = None
@@ -47,3 +56,15 @@ class ForeignLegacyVsNewAux:
 
     def obtenerFkEmpresaAgendaza(self,idLegacy):
         return self.empresa_id_legacy_vs_agendaza_id.get(idLegacy)
+
+    def obtenerFKExtraSegunIdLegacy(self, tipo, id):
+        if tipo == "VARIABLE_CATERING":
+            pass
+        if tipo == "EVENTO":
+            pass
+
+        if tipo == "TIPO_CATERING":
+            return self.extra_tipo_catering_id_legacy_vs_agendaza_id.get(id)
+
+        if tipo == "VARIABLE_EVENTO":
+            pass

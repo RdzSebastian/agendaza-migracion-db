@@ -12,9 +12,10 @@ class TipoEventoExtra(conexionAgendaza.Base):
 
     extra_tipo_catering_id_legacy = Column(Integer, nullable=False)
 
-    def __init__(self, tipo_evento_id, tipo_evento_id_legacy):
+    def __init__(self, tipo_evento_id, tipo_evento_id_legacy,extra_id):
         self.tipo_evento_id = tipo_evento_id
         self.tipo_evento_id_legacy = tipo_evento_id_legacy
+        self.extra_id = extra_id
 
     def asignarIdLegacy(self, tipo, id):
         if tipo == "TIPO_CATERING":
