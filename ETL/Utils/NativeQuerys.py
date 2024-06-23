@@ -250,10 +250,36 @@ class NativeQuerys:
         EVENTO_EXTRA_SUB_TIPO_EVENTO
     """
 
-    queryParaTipoEventoExtraDeEventoExtraTipoCatering = """
+    queryForSubTipoEventoTipoCatering= """
     SELECT
         TIPO_CATERING_ID AS TIPO_EXTRA,
         SUB_TIPO_EVENTO_ID AS EXTRA_ID
     FROM
         SUB_TIPO_EVENTO_TIPO_CATERING;
     """
+
+    queryFroSubTipoEvento ="""
+    SELECT
+        SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
+        EXTRA_ID AS EXTRA_ID
+    FROM
+        SUB_TIPO_EVENTO_EXTRA;
+    """
+
+    queryForSubTipoEventoExtraVariableCatering = """
+    SELECT
+        SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
+        EXTRA_VARIABLE_CATERING_ID AS EXTRA_ID
+    FROM
+        SUB_TIPO_EVENTO_EXTRA_VARIABLE_CATERING;  
+    """
+
+    queryForSubTipoEventoExtraVariable = """
+    SELECT
+        SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
+        EXTRA_VARIABLE_ID AS EXTRA_ID
+    FROM
+        SUB_TIPO_EVENTO_EXTRA_VARIABLE;
+    
+    """
+
