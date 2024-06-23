@@ -8,11 +8,14 @@ class TipoEventoExtra(conexionAgendaza.Base):
     tipo_evento_id = Column(BigInteger, primary_key=True, nullable=False)
     extra_id = Column(BigInteger, primary_key=True, nullable=False)
 
-    tipo_evento_id_legacy = Column(BigInteger)
-    extra_id_legacy = Column(BigInteger)
+    tipo_evento_id_legacy = Column(Integer, nullable=False)
 
-    def __init__(self, tipo_evento_id, servicio_id, tipo_evento_id_legacy, extra_id_legacy):
+    extra_tipo_catering_id_legacy = Column(Integer, nullable=False)
+
+    def __init__(self, tipo_evento_id, tipo_evento_id_legacy):
         self.tipo_evento_id = tipo_evento_id
-        self.servicio_id = servicio_id
         self.tipo_evento_id_legacy = tipo_evento_id_legacy
-        self.extra_id_legacy = extra_id_legacy
+
+    def asignarIdLegacy(self, tipo, id):
+        if tipo == "TIPO_CATERING":
+            self.extra_tipo_catering_id_legacy = id

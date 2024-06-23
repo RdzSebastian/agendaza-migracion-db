@@ -579,6 +579,23 @@ async def eventoExtraETL():
     eventoExtraRepository.saveAll(listaAMigrar)
 
 
+async def tipoEventoExtraETL(query, tipo):
+    global geserveAppQueries
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+    global tipoEventoExtraRepository
+
+    listaAMigrar = geserveAppQueries.sqlNativeQuery(query)
+
+    for tipoEventoExtraLegacy in listaAMigrar:
+        tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
+            tipoEventoExtraLegacy.tipo_evento_id)
+
+        tipoEventoExtraLegacyAMigrar = TipoEventoExtra(tipo_evento_id=tipo_evento_id,
+                                                       tipo_evento_id_legacy=tipoEventoExtraLegacy.tipo_evento_id)
+        tipoEventoExtraLegacyAMigrar.asignarIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
+
+
 ##############################################################################################################
 async def main():
     global foreignLegacyVsNewAux
@@ -613,6 +630,7 @@ async def main():
     await tipoEventoServicioETL()
     await eventoExtraVariable()
     await eventoExtraETL()
+    await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoTipoCatering, "TIPO_CATERING")
 
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -655,6 +673,8 @@ from repositorio.EventoExtraVariableRepository import EventoExtraVariableReposit
 from ETL.agendaza.EventoExtraVariable import EventoExtraVariable
 from repositorio.EventoExtraRepository import EventoExtraRepository
 from ETL.agendaza.EventoExtra import EventoExtra
+from repositorio.TipoEventoExtraRepository import TipoEventoExtraRepository
+from ETL.agendaza.TipoEventoExtra import TipoEventoExtra
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -685,6 +705,6 @@ servicioRepository = ServicioRepository(conexionAgendaza.session)
 tipoEventoServicioRepository = TipoEventoServicioRepository(conexionAgendaza.session)
 eventoExtraVariableRepository = EventoExtraVariableRepository(conexionAgendaza.session)
 eventoExtraRepository = EventoExtraRepository(conexionAgendaza.session)
-
+tipoEventoExtraRepository = TipoEventoExtraRepository(conexionAgendaza.session)
 # Ejecutar el bucle principal
 asyncio.run(main())
