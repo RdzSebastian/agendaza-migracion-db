@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func, Boolean
+from sqlalchemy import Column, Integer, String, BigInteger, Date, UniqueConstraint, func, Boolean, DateTime
 from ETL.Conexión import conexionAgendaza
 from datetime import date
 
@@ -6,9 +6,9 @@ from datetime import date
 class PrecioConFechaExtra(conexionAgendaza.Base):
     __tablename__ = 'precio_con_fecha_extra'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    desde = Column(Date)
+    desde = Column(DateTime)
     fecha_baja = Column(Date)
-    hasta = Column(Date)
+    hasta = Column(DateTime)
     precio = Column(Integer)
     empresa_id = Column(Integer)
     extra_id = Column(Integer)

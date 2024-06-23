@@ -249,3 +249,11 @@ class NativeQuerys:
     FROM
         EVENTO_EXTRA_SUB_TIPO_EVENTO
     """
+
+    queryParaTipoEventoExtraDeEventoExtraTipoCatering = """
+    SELECT
+        TIPO_CATERING_ID AS TIPO_EXTRA,
+        SUB_TIPO_EVENTO_ID AS EXTRA_ID
+    FROM
+        SUB_TIPO_EVENTO_TIPO_CATERING;
+    """

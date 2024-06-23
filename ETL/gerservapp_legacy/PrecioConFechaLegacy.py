@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, BigInteger
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, BigInteger, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,8 +13,8 @@ class PrecioConFechaLegacy(conexionGeserveApp.Base, Legacy):
     __abstract__ = True
     id = Column(Integer, primary_key=True, autoincrement=True)
     precio = Column(Integer)
-    desde = Column(Date)
-    hasta = Column(Date)
+    desde = Column(DateTime)
+    hasta = Column(DateTime)
     salon_id = Column(Integer)
 
     empresa_id = None
