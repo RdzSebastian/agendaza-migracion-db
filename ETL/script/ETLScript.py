@@ -83,6 +83,9 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_id_legacy INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_variable_catering INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -646,6 +649,9 @@ async def main():
     await eventoExtraETL()
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoTipoCatering, "TIPO_CATERING")
     await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
+    await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
+
+#VARIABLE_EVENTO
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 

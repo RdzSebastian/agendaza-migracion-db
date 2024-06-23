@@ -67,4 +67,4 @@ class ForeignLegacyVsNewAux:
             return self.extra_tipo_catering_id_legacy_vs_agendaza_id.get(id)
 
         if tipo == "VARIABLE_EVENTO":
-            pass
+            return self.extra_variable_evento_id_legacy_vs_agendaza_id.get(id)
