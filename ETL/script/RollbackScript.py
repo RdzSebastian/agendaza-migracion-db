@@ -42,7 +42,7 @@ try:
 
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries,
-                         "DELETE FROM tipo_evento_extra where tipo_evento_id_legacy IS NOT NULL OR extra_tipo_catering_id_legacy IS NOT NULL"))
+                         "DELETE FROM tipo_evento_extra where tipo_evento_id_legacy IS NOT NULL OR extra_tipo_catering_id_legacy IS NOT NULL OR extra_sub_tipo_evento_id_legacy IS NOT NULL"))
 
     queryDeleteFromList.append(
         QueryDeleteyBase(agendazaAppQueries,
@@ -102,6 +102,9 @@ try:
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  tipo_evento_id_legacy")
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  extra_tipo_catering_id_legacy")
+
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  extra_sub_tipo_evento_id_legacy")
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra DROP COLUMN IF EXISTS  evento_id_legacy")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra DROP COLUMN IF EXISTS  extra_id_legacy")

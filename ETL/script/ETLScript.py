@@ -80,6 +80,8 @@ async def columnasAuxiliares():
 
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN tipo_evento_id_legacy INTEGER")
     agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_tipo_catering_id_legacy INTEGER")
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_id_legacy INTEGER")
 
 
 async def ETLUsuario():
@@ -572,8 +574,6 @@ async def eventoExtraETL():
         evento_id = foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.evento_id)
         extra_id = foreignLegacyVsNewAux.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(eventoExtraLegacy.extra_id)
 
-
-
         eventoExtraAMigrar = EventoExtra(evento_id=evento_id, extra_id=extra_id,
                                          evento_id_legacy=eventoExtraLegacy.evento_id,
                                          extra_id_legacy=eventoExtraLegacy.extra_id)
@@ -595,8 +595,10 @@ async def tipoEventoExtraETL(query, tipo):
         tipo_evento_id = foreignLegacyVsNewAux.tipoEventoIdLegacyTipoEventoIdAgendazaDic.get(
             tipoEventoExtraLegacy.tipo_evento_id)
 
-
         extra_id = foreignLegacyVsNewAux.obtenerFKExtraSegunIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
+
+        if tipo == "EVENTO" and extra_id is None:
+            print("extra legacy", tipoEventoExtraLegacy.extra_id, "extra_actual", extra_id)
 
         tipoEventoExtraLegacyAMigrar = TipoEventoExtra(tipo_evento_id=tipo_evento_id,
                                                        tipo_evento_id_legacy=tipoEventoExtraLegacy.tipo_evento_id,
@@ -605,7 +607,7 @@ async def tipoEventoExtraETL(query, tipo):
         tipoEventoExtraLegacyAMigrar.asignarIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
         listaAGuardar.append(tipoEventoExtraLegacyAMigrar)
 
-    tipoEventoExtraRepository.saveAll(listaAGuardar)
+        tipoEventoExtraRepository.saveAll(listaAGuardar)
 
 
 ##############################################################################################################
@@ -625,7 +627,7 @@ async def main():
     foreignLegacyVsNewAux.setEmpresaIds(listaEmpresa)
 
     await extraETL(nativeQuerys.queryVARIABLE_CATERING, foreignLegacyVsNewAux, "VARIABLE_CATERING")
-    await extraETL(nativeQuerys.querySubTipoEvento, foreignLegacyVsNewAux, "EVENTO")
+    await extraETL(nativeQuerys.queryExtSubTipoEvento, foreignLegacyVsNewAux, "EVENTO")
     await extraETL(nativeQuerys.queryTipoCatering, foreignLegacyVsNewAux, "TIPO_CATERING")
     await extraETL(nativeQuerys.queryVariable_Evento, foreignLegacyVsNewAux, "VARIABLE_EVENTO")
     await duplicarExtrasMigradosParaEmpresaDiferente()
@@ -643,7 +645,7 @@ async def main():
     await eventoExtraVariable()
     await eventoExtraETL()
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoTipoCatering, "TIPO_CATERING")
-
+    await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 

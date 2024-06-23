@@ -22,7 +22,7 @@ class NativeQuerys:
 	;
     """
 
-    querySubTipoEvento = """ 
+    queryExtSubTipoEvento = """ 
         SELECT DISTINCT
             EXTRA.ID,
             EXTRA.NOMBRE,
