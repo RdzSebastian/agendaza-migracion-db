@@ -9,8 +9,8 @@ from sqlalchemy.ext.declarative import declarative_base
 agendaza_db_parametros = {
     'dbname': 'agendaza',
     'user': 'postgres',
-    'password': 'postgres',
-    'host': 'localhost',
+    'password': 'argento1',
+    'host': 'agendaza.qa.bsas.com.ar',
     'port': '5432'
 }
 geservapp_db_parametros = {

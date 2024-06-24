@@ -205,6 +205,7 @@ class NativeQuerys:
     FROM
         EVENTO E
         JOIN CATERING CA ON E.CATERING_ID = CA.ID
+	WHERE SALON_ID IS NOT NULL
     ORDER BY
         E.ID ASC
         ;
