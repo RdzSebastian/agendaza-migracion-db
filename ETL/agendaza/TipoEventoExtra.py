@@ -13,6 +13,7 @@ class TipoEventoExtra(conexionAgendaza.Base):
     extra_tipo_catering_id_legacy = Column(Integer, nullable=False)
     extra_sub_tipo_evento_id_legacy = Column(Integer, nullable=False)
     extra_sub_tipo_evento_variable_catering = Column(Integer, nullable=False)
+    extra_sub_tipo_evento_extra_variable_catering = Column(Integer, nullable=False)
 
     def __init__(self, tipo_evento_id, tipo_evento_id_legacy, extra_id):
         self.tipo_evento_id = tipo_evento_id
@@ -28,3 +29,6 @@ class TipoEventoExtra(conexionAgendaza.Base):
 
         if tipo == "VARIABLE_EVENTO":
             self.extra_sub_tipo_evento_variable_catering = id
+
+        if tipo == "VARIABLE_CATERING":
+            self.extra_sub_tipo_evento_extra_variable_catering = id

@@ -16,6 +16,7 @@ class ForeignLegacyVsNewAux:
     extra_tipo_catering_id_legacy_vs_agendaza_id = {}
     extra_variable_evento_id_legacy_vs_agendaza_id = {}
     extra_sub_tipo_evento_id_legacy_vs_agendaza_id = {}
+    extra_variable_catering_id_legacy_vs_agendaza_id = {}
 
 
     def setEmpresaIds(self, empresaList):
@@ -59,7 +60,7 @@ class ForeignLegacyVsNewAux:
 
     def obtenerFKExtraSegunIdLegacy(self, tipo, id):
         if tipo == "VARIABLE_CATERING":
-            pass
+            return self.extra_variable_catering_id_legacy_vs_agendaza_id.get(id)
         if tipo == "EVENTO":
             return self.extra_sub_tipo_evento_id_legacy_vs_agendaza_id.get(id)
 
@@ -68,3 +69,4 @@ class ForeignLegacyVsNewAux:
 
         if tipo == "VARIABLE_EVENTO":
             return self.extra_variable_evento_id_legacy_vs_agendaza_id.get(id)
+

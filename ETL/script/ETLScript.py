@@ -86,6 +86,9 @@ async def columnasAuxiliares():
     agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_variable_catering INTEGER")
 
+    agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_extra_variable_catering INTEGER")
+
 
 async def ETLUsuario():
     global usuarioLegacyRepository
@@ -263,6 +266,7 @@ async def setNewforeignLegacyVsNewAux(extra, idLegacy, empresaLegacyId):
                                                       )
 
         foreignLegacyVsNewAux.variableCateringVsAExtraAgendazaList.append(idVsIdLegacy)
+        foreignLegacyVsNewAux.extra_variable_catering_id_legacy_vs_agendaza_id[idLegacy] = extra.id
 
     if extra.tipo_extra == "EVENTO":
         idVsIdLegacy = ExtraGeserveAppVsExtraAgendaza(id_agendaza=extra.id, id_legacy=idLegacy,
@@ -600,9 +604,6 @@ async def tipoEventoExtraETL(query, tipo):
 
         extra_id = foreignLegacyVsNewAux.obtenerFKExtraSegunIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
 
-        if tipo == "EVENTO" and extra_id is None:
-            print("extra legacy", tipoEventoExtraLegacy.extra_id, "extra_actual", extra_id)
-
         tipoEventoExtraLegacyAMigrar = TipoEventoExtra(tipo_evento_id=tipo_evento_id,
                                                        tipo_evento_id_legacy=tipoEventoExtraLegacy.tipo_evento_id,
                                                        extra_id=extra_id)
@@ -610,7 +611,7 @@ async def tipoEventoExtraETL(query, tipo):
         tipoEventoExtraLegacyAMigrar.asignarIdLegacy(tipo, tipoEventoExtraLegacy.extra_id)
         listaAGuardar.append(tipoEventoExtraLegacyAMigrar)
 
-        tipoEventoExtraRepository.saveAll(listaAGuardar)
+    tipoEventoExtraRepository.saveAll(listaAGuardar)
 
 
 ##############################################################################################################
@@ -650,8 +651,9 @@ async def main():
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoTipoCatering, "TIPO_CATERING")
     await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
+    await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariableCatering, "VARIABLE_CATERING")
 
-#VARIABLE_EVENTO
+    # VARIABLE_EVENTO
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
 
