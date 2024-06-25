@@ -17,7 +17,7 @@ class PrecioConFechaExtraVariableCateringRepository(Repositorio[PrecioConFechaEx
     def __init__(self, session: sessionmaker):
         super().__init__(session)
 
-    def getAll(self) -> list[PrecioConFechaExtraVariableCatering]:
+    async def getAll(self) -> list[PrecioConFechaExtraVariableCatering]:
         try:
             return self.session.query(PrecioConFechaExtraVariableCatering).filter(
                 PrecioConFechaExtraVariableCatering.precio != 0).all()
@@ -29,7 +29,7 @@ class PrecioConFechaExtraSubTipoEventoRepository(Repositorio[PrecioConFechaSubTi
     def __init__(self, session: sessionmaker):
         super().__init__(session)
 
-    def getAll(self) -> list[PrecioConFechaSubTipoEvento]:
+    async def getAll(self) -> list[PrecioConFechaSubTipoEvento]:
         try:
             return self.session.query(PrecioConFechaSubTipoEvento).filter(
                 PrecioConFechaSubTipoEvento.precio != 0).all()
@@ -41,7 +41,7 @@ class PrecioConFechaExtraTipoCateringRepository(Repositorio[PrecioConFechaTipoCa
     def __init__(self, session: sessionmaker):
         super().__init__(session)
 
-    def getAll(self) -> list[PrecioConFechaTipoCatering]:
+    async def getAll(self) -> list[PrecioConFechaTipoCatering]:
         try:
             return self.session.query(PrecioConFechaTipoCatering).filter(
                 PrecioConFechaTipoCatering.precio != 0).all()
@@ -53,7 +53,7 @@ class PrecioConFechaExtraVariableEventoRepository(Repositorio[PrecioConFechaExtr
     def __init__(self, session: sessionmaker):
         super().__init__(session)
 
-    def getAll(self) -> list[PrecioConFechaExtraVariableSubTipoEvento]:
+    async def getAll(self) -> list[PrecioConFechaExtraVariableSubTipoEvento]:
         try:
             return self.session.query(PrecioConFechaExtraVariableSubTipoEvento).filter(
                 PrecioConFechaExtraVariableSubTipoEvento.precio != 0).all()
