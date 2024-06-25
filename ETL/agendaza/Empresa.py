@@ -6,7 +6,7 @@ from datetime import date
 class Empresa(conexionAgendaza.Base):
     __tablename__ = 'empresa'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True,autoincrement=True)
     nombre = Column(String)
     telefono = Column(Integer)
     email = Column(String)

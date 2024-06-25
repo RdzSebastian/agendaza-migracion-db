@@ -155,77 +155,32 @@ async def main():
 
         await alterTableQuerys()
 
-        idUsuarioMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM usuario")).scalar()
-        if idUsuarioMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE usuario_id_seq RESTART WITH {idUsuarioMax}")
-        else:
-            print("No se pudo obtener el valor de idUsuarioMax. No se reinició la secuencia.")
+        async def reset_sequence_if_max_value_exists(table_name, sequence_name, query_instance):
+            max_id_query = f"SELECT MAX(id)+1 FROM {table_name}"
+            max_id = (await query_instance.sqlNativeQuery(max_id_query)).scalar()
+            if max_id is not None:
+                await query_instance.sqlNativeQuery(f"ALTER SEQUENCE {sequence_name} RESTART WITH {max_id}")
+            else:
+                print(f"No se pudo obtener el valor máximo de ID para {table_name}. No se reinició la secuencia.")
 
-        idEmpresaMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM empresa")).scalar()
-        if idEmpresaMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE empresa_id_seq RESTART WITH {idEmpresaMax}")
-        else:
-            print("No se pudo obtener el valor de idEmpresaMax. No se reinició la secuencia.")
+        # Lista de tablas y secuencias
+        tables_sequences = [
+            ("usuario", "usuario_id_seq"),
+            ("empresa", "empresa_id_seq"),
+            ("cargo", "cargo_id_seq"),
+            ("extra", "extra_id_seq"),
+            ("precio_con_fecha_extra", "precio_con_fecha_extra_id_seq"),
+            ("capacidad", "capacidad_id_seq"),
+            ("tipo_evento", "tipo_evento_id_seq"),
+            ("precio_con_fecha_tipo_evento", "precio_con_fecha_tipo_evento_id_seq"),
+            ("evento", "evento_id_seq"),
+            ("servicio", "servicio_id_seq"),
+            ("evento_extra_variable", "evento_extra_variable_id_seq")
+        ]
 
-        idCargoMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM CARGO")).scalar()
-        if idCargoMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE cargo_id_seq RESTART WITH {idCargoMax}")
-        else:
-            print("No se pudo obtener el valor de idCargoMax. No se reinició la secuencia.")
-
-        idExtraMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM EXTRA")).scalar()
-        if idExtraMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE extra_id_seq RESTART WITH {idExtraMax}")
-        else:
-            print("No se pudo obtener el valor de idExtraMax. No se reinició la secuencia.")
-
-        idFechaConPrecioExtraMax = (
-            await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM precio_con_fecha_extra")).scalar()
-        if idFechaConPrecioExtraMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(
-                f"ALTER SEQUENCE precio_con_fecha_extra_id_seq RESTART WITH {idFechaConPrecioExtraMax}")
-        else:
-            print("No se pudo obtener el valor de idFechaConPrecioExtraMax. No se reinició la secuencia.")
-
-        idCapacidadMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM capacidad")).scalar()
-        if idCapacidadMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE capacidad_id_seq RESTART WITH {idCapacidadMax}")
-        else:
-            print("No se pudo obtener el valor de idCapacidadMax. No se reinició la secuencia.")
-
-        idTipoEventoMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM tipo_evento")).scalar()
-        if idTipoEventoMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE tipo_evento_id_seq RESTART WITH {idTipoEventoMax}")
-        else:
-            print("No se pudo obtener el valor de idTipoEventoMax. No se reinició la secuencia.")
-
-        idPrecioConFechaTipoEventoMax = (
-            await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM precio_con_fecha_tipo_evento")).scalar()
-        if idPrecioConFechaTipoEventoMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(
-                f"ALTER SEQUENCE precio_con_fecha_tipo_evento_id_seq RESTART WITH {idPrecioConFechaTipoEventoMax}")
-        else:
-            print("No se pudo obtener el valor de idPrecioConFechaTipoEventoMax. No se reinició la secuencia.")
-
-        idEventoMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM EVENTO")).scalar()
-        if idEventoMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE evento_id_seq RESTART WITH {idEventoMax}")
-        else:
-            print("No se pudo obtener el valor de idEventoMax. No se reinició la secuencia.")
-
-        idServicioMax = (await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM SERVICIO")).scalar()
-        if idServicioMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(f"ALTER SEQUENCE servicio_id_seq RESTART WITH {idServicioMax}")
-        else:
-            print("No se pudo obtener el valor de idServicioMax. No se reinició la secuencia.")
-
-        idEventoExtraVariableMax = (
-            await agendazaAppQueries.sqlNativeQuery("SELECT MAX(id)+1 FROM evento_extra_variable")).scalar()
-        if idEventoExtraVariableMax is not None:
-            await agendazaAppQueries.sqlNativeQuery(
-                f"ALTER SEQUENCE evento_extra_variable_id_seq RESTART WITH {idEventoExtraVariableMax}")
-        else:
-            print("No se pudo obtener el valor de idEventoExtraVariableMax. No se reinició la secuencia.")
+        # Iterar sobre cada tabla y secuencia para reiniciar si es posible
+        for table, sequence in tables_sequences:
+            await reset_sequence_if_max_value_exists(table, sequence, agendazaAppQueries)
 
     except Exception as e:
         for repositorio in repositorioList:
