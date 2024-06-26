@@ -41,6 +41,10 @@ class Repositorio(ABC, Generic[T]):
     async def rollback(self):
         self.session.rollback()
 
+    async def count(self) -> int:
+        clase = await self.obtenerClase()
+        return self.session.query(clase).count()
+
 
 class UsuarioLegacyRepository(Repositorio[UsuarioLegacy]):
     def __init__(self, session: sessionmaker):

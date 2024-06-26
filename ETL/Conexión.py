@@ -32,7 +32,6 @@ class ConexionBD:
         self.db_parametros = db_parametros
 
     def construir_url(self):
-        print(f"postgresql://{self.db_parametros['user']}:{self.db_parametros['password']}@{self.db_parametros['host']}:{self.db_parametros['port']}/{self.db_parametros['dbname']}")
         return f"postgresql://{self.db_parametros['user']}:{self.db_parametros['password']}@{self.db_parametros['host']}:{self.db_parametros['port']}/{self.db_parametros['dbname']}"
 
     def realizar_conexion(self):

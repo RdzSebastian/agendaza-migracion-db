@@ -1,3 +1,5 @@
+from colorama import Fore
+
 from ETL.Conexión import conexionAgendaza
 from ETL.Conexión import conexionGeserveApp
 import pandas as pd
@@ -10,6 +12,41 @@ from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgend
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
+
+import logging
+
+
+class ColoredFormatter(logging.Formatter):
+    COLORS = {
+        'DEBUG': Fore.CYAN,  # Cyan para mensajes DEBUG
+        'INFO': Fore.GREEN,  # Verde para mensajes INFO
+        'WARNING': Fore.YELLOW,  # Amarillo para mensajes WARNING
+        'ERROR': Fore.RED,  # Rojo para mensajes ERROR
+        'CRITICAL': Fore.MAGENTA  # Magenta para mensajes CRITICAL
+    }
+
+    def format(self, record):
+        log_color = self.COLORS.get(record.levelname, Fore.WHITE)  # Blanco para otros niveles
+        log_msg = f"{log_color}{record.levelname}: {record.getMessage()}{Fore.RESET}"
+        return log_msg
+
+
+# Configurar el logger
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Configurar el manejador de consola con el formato personalizado
+console_handler = logging.StreamHandler()
+console_formatter = ColoredFormatter()
+console_handler.setFormatter(console_formatter)
+logger.addHandler(console_handler)
+
+
+def log(message, COLOR):
+    print(f"{COLOR} {message}{Fore.RESET}")
+
+
+# Ejemplo de uso
 
 
 # Solo usarlo para probar que se hayan traído los datos desde la BD
@@ -45,12 +82,26 @@ async def columnasAuxiliares():
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_catering_id_legacy INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN EXTRA_SUB_TIPO_EVENTO_ID_LEGACY INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN tipo_catering_id_legacy INTEGER");
+<<<<<<< HEAD
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE extra ADD COLUMN extra_variable_sub_tipo_evento_id_legacy INTEGER");
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_catering_legacy INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_sub_tipo_evento_legacy INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_sub_tipo_evento_legacy INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_tipo_catering_legacy INTEGER");
+=======
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE extra ADD COLUMN extra_variable_sub_tipo_evento_id_legacy INTEGER");
+
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_catering_legacy INTEGER");
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_variable_sub_tipo_evento_legacy INTEGER");
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_sub_tipo_evento_legacy INTEGER");
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE precio_con_fecha_extra ADD COLUMN extra_tipo_catering_legacy INTEGER");
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE capacidad ADD COLUMN es_migrado BOOLEAN");
 
@@ -64,7 +115,12 @@ async def columnasAuxiliares():
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE SERVICIO ADD COLUMN servicio_id_legacy INTEGER");
 
+<<<<<<< HEAD
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN tipo_evento_id_legacy INTEGER");
+=======
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE tipo_evento_servicio ADD COLUMN tipo_evento_id_legacy INTEGER");
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE tipo_evento_servicio ADD COLUMN servicio_id_legacy INTEGER");
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra_variable ADD COLUMN id_legacy INTEGER");
@@ -72,12 +128,25 @@ async def columnasAuxiliares():
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE evento_extra ADD COLUMN extra_id_legacy INTEGER");
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN tipo_evento_id_legacy INTEGER");
+<<<<<<< HEAD
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_tipo_catering_id_legacy INTEGER");
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_id_legacy INTEGER");
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_variable_catering INTEGER");
 
     await agendazaAppQueries.sqlNativeQuery("ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_extra_variable_catering INTEGER");
+=======
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_tipo_catering_id_legacy INTEGER");
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_id_legacy INTEGER");
+
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_variable_catering INTEGER");
+
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_extra_variable_catering INTEGER");
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
 
 
 async def ETLUsuario():
@@ -86,6 +155,12 @@ async def ETLUsuario():
 
     # EXTRACCION
     usuarioLegacyList = await  usuarioLegacyRepository.getAll()
+<<<<<<< HEAD
+=======
+
+    conteo = await InfoMigracion(usuarioLegacyList, usuarioAgendazaRepository, 'USUARIO', 'USUARIO')
+
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     # TRANSFORMACION
     usuarioAgendazaList = transformacion(usuarioLegacyList)
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
@@ -98,14 +173,39 @@ async def ETLUsuario():
     await usuarioLegacyRepository.saveAll(usuarioLegacyList)
     await postUsuarioETL(usuarioAgendazaList)
 
+    await validacionAgenda(conteo, await usuarioAgendazaRepository.getAll())
+
+
+async def InfoMigracion(listaLegacy, repositorioActual, tablaLegacy, tablaAgendaza):
+    global numeroDeMigracion
+    numeroDeMigracion = numeroDeMigracion + 1
+    log(f"{numeroDeMigracion}- MIGRACION DE {tablaLegacy}(GESERVAPP) -> ´{tablaAgendaza}(AGENDAZA) ", Fore.GREEN)
+    conteoAgendaza = await repositorioActual.count()
+    mensaje = f'    {tablaLegacy}(GESERVAPP) : {len(listaLegacy)} REGISTROS'
+    mensaje2 = f'    {tablaAgendaza}(AGENDAZA) : {conteoAgendaza} REGISTROS'
+    suma = len(listaLegacy) + conteoAgendaza
+    mensaje3 = f'    EXPECTATIVA : {suma} REGISTROS EN LA TABLA {tablaAgendaza} DE LA BD AGENDAZA'
+    log(mensaje, Fore.CYAN)
+    log(mensaje2, Fore.CYAN)
+    log(mensaje3, Fore.MAGENTA)
+
+    return suma
+
+
+async def validacionAgenda(conteoObtenido, listaAgendaza):
+    conteoObtenido = int(conteoObtenido)
+    suma = len(listaAgendaza)
+    if conteoObtenido == suma:
+        log(f'    RESULTADO : {conteoObtenido} - MIGRACION EXITOSA', Fore.LIGHTBLUE_EX)
+    else:
+        log(f'    RESULTADO : {conteoObtenido} - ERROR - REALIZAR ROLLBACK', Fore.LIGHTBLUE_EX)
+
 
 async def postUsuarioETL(usuarioAgendazaList):
     global foreignLegacyVsNewAux
 
     for usuarioMigrado in usuarioAgendazaList:
         foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id[usuarioMigrado.id_usuario_legacy] = usuarioMigrado.id
-
-    print("KEY USUARIO ID_LEGACY - VALUE USUARIO_ID_AGENDAZA", foreignLegacyVsNewAux.usuario_id_legacy_vs_agendaza_id)
 
 
 async def ETLCliente():
@@ -114,12 +214,21 @@ async def ETLCliente():
 
     # Extraccion
     clienteLegacyList = await clienteReserveappRepository.getAll()
+<<<<<<< HEAD
+=======
+
+    conteo = await InfoMigracion(clienteLegacyList, usuarioAgendazaRepository, 'CLIENTE', 'USUARIO')
+
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     # TRANSFORMACION
     usuarioAgendazaList = transformacion(clienteLegacyList)
 
     # LOAD/CARGA/MIGRACION -> ETL Finalizado
     await usuarioAgendazaRepository.saveAll(usuarioAgendazaList)
     await postClienteETL(usuarioAgendazaList)
+
+    await validacionAgenda(conteo, await usuarioAgendazaRepository.getAll())
+
 
 
 async def postClienteETL(usuarioAgendazaList):
@@ -128,14 +237,18 @@ async def postClienteETL(usuarioAgendazaList):
     for usuarioItem in usuarioAgendazaList:
         foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id[usuarioItem.id_cliente_legacy] = usuarioItem.id
 
-    print("KEY CLIENTE ID_LEGACY - VALUE USUARIO_ID_AGENDAZA",
-          foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id)
+   # print("KEY CLIENTE ID_LEGACY - VALUE USUARIO_ID_AGENDAZA",
+   #      foreignLegacyVsNewAux.cliente_id_legacy_vs_agendaza_id)
 
 
 async def ETLEmpresa():
     global salonLegacyRepository
     global empresaAgendazaAppRepository
+<<<<<<< HEAD
     salones =await salonLegacyRepository.getAll()
+=======
+    salones = await salonLegacyRepository.getAll()
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     listaEmpresa = transformacion(salones)
 
     await empresaAgendazaAppRepository.saveAll(listaEmpresa)
@@ -321,7 +434,12 @@ async def postMigracionCapacidadETL(capacidadListAgendaza, capacidadAMigrar):
     for cap in capacidadAMigrar:
         capacidadUtil.capacidadAgendazaList.append(cap)
 
+<<<<<<< HEAD
     todasLasCapacidades = await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForCapacidadGeserveAppFullPostMigration)
+=======
+    todasLasCapacidades = await geserveAppQueries.sqlNativeQuery(
+        nativeQuerys.queryForCapacidadGeserveAppFullPostMigration)
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
 
     todasLasCapacidadesLegacyTransformadas = []
 
@@ -403,7 +521,11 @@ async def eventoETL():
     global nativeQuerys
     global eventoRepository
 
+<<<<<<< HEAD
     eventosLegacyList =await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEvento)
+=======
+    eventosLegacyList = await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEvento)
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     eventosAMigrar = []
 
     for eventoLegacy in eventosLegacyList:
@@ -443,7 +565,7 @@ async def postEventoETL(listaDeEventosMigrados):
     for eventoMigrado in listaDeEventosMigrados:
         foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id[eventoMigrado.evento_id_legacy] = eventoMigrado.id
 
-    print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ", foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
+   # print("KEY EVENTO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ", foreignLegacyVsNewAux.evento_id_legacy_vs_agendaza_id)
 
 
 async def pagoETL():
@@ -506,8 +628,8 @@ async def postServicioETL(serviciosMigrados):
     for servicioMigrado in serviciosMigrados:
         foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id[servicioMigrado.servicio_id_legacy] = servicioMigrado.id
 
-    print("KEY SERVICIO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ",
-          foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id)
+    #print("KEY SERVICIO ID_LEGACY - VALUE EVENTO ID AGENDAZA : ",
+    #     foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id)
 
 
 async def tipoEventoServicioETL():
@@ -516,7 +638,11 @@ async def tipoEventoServicioETL():
     global nativeQuerys
     global foreignLegacyVsNewAux
 
+<<<<<<< HEAD
     listaTipoEventoServicioLegacy =await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForSubTipoEventoServicio)
+=======
+    listaTipoEventoServicioLegacy = await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForSubTipoEventoServicio)
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     listaTipoEventoServiciosAMigrar = []
 
     for tipoEventoServicioLegacy in listaTipoEventoServicioLegacy:
@@ -538,7 +664,11 @@ async def eventoExtraVariable():
     global foreignLegacyVsNewAux
     global eventoExtraVariableRepository
 
+<<<<<<< HEAD
     listaEventoExtraVaraibleLegacy =await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEventoExtraVariable)
+=======
+    listaEventoExtraVaraibleLegacy = await  geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEventoExtraVariable)
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
 
     listaEventoExtraVariableAMigrar = []
 
@@ -563,7 +693,12 @@ async def eventoExtraETL():
     global foreignLegacyVsNewAux
     global eventoExtraRepository
 
+<<<<<<< HEAD
     listaEventoExtraLegacyAMigrar = await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEventoExtraSubTipoEvento)
+=======
+    listaEventoExtraLegacyAMigrar = await geserveAppQueries.sqlNativeQuery(
+        nativeQuerys.queryForEventoExtraSubTipoEvento)
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
 
     listaAMigrar = []
 
@@ -643,6 +778,15 @@ async def main():
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariableCatering, "VARIABLE_CATERING")
 
+<<<<<<< HEAD
+=======
+    # logging.debug('Este es un mensaje de debug')
+    # logging.info('Este es un mensaje informativo')
+    # logging.warning('¡Cuidado! Este es un mensaje de advertencia')
+    # logging.error('Ha ocurrido un error')
+    # logging.critical('Esto es crítico')
+
+>>>>>>> ff2dca5cae093215bd7f67df767829ae3f770eae
     # VARIABLE_EVENTO
     conexionAgendaza.cerrar_conexion()
     conexionGeserveApp.cerrar_conexion()
@@ -718,5 +862,7 @@ tipoEventoServicioRepository = TipoEventoServicioRepository(conexionAgendaza.ses
 eventoExtraVariableRepository = EventoExtraVariableRepository(conexionAgendaza.session)
 eventoExtraRepository = EventoExtraRepository(conexionAgendaza.session)
 tipoEventoExtraRepository = TipoEventoExtraRepository(conexionAgendaza.session)
+logging.basicConfig(level=logging.INFO)
+numeroDeMigracion = 0;
 # Ejecutar el bucle principal
 asyncio.run(main())
