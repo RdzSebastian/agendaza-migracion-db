@@ -14,9 +14,7 @@ class Cargo(conexionAgendaza.Base):
 
     def __init__(self, usuario_id, tipo_cargo):
         self.usuario_id = usuario_id
-
         self.tipo_cargo = tipo_cargo
-        self.es_legacy = True
 
     def setEmpresaId(self, empresaList, salon_id_legacy):
         for empresa in empresaList:

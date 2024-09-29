@@ -1,3 +1,11 @@
-/pgadmin
-/Docker
-/ETL/conexion.py
+# Ignore virtual environment directory
+.venv/
+
+__pycache__/
+
+/pgadmin/*
+
+/Docker/*
+
+ETL/conexion.py
+

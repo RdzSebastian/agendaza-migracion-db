@@ -8,9 +8,9 @@ class NativeQuerys:
         JOIN CATERING CA ON CA.ID =  CEXTRA.CATERING_ID
         JOIN EVENTO E ON E.CATERING_ID = CA.ID
 	WHERE E.SALON_ID IS NOT NULL
-    
+
 	UNION
-        
+
     SELECT DISTINCT
         ETC.ID AS ID,
         ETC.NOMBRE AS NOMBRE,
@@ -32,9 +32,9 @@ class NativeQuerys:
             JOIN EVENTO_EXTRA_SUB_TIPO_EVENTO NM ON EXTRA.ID = NM.EXTRA_SUB_TIPO_EVENTO_ID
             JOIN EVENTO E ON E.ID = NM.EVENTO_ID
 		WHERE E.SALON_ID IS NOT NULL
-        
+
         UNION 
-        
+
         SELECT DISTINCT
             ESTE.ID AS ID,
             ESTE.NOMBRE AS NOMBRE,
@@ -42,7 +42,7 @@ class NativeQuerys:
         FROM
             EXTRA_SUB_TIPO_EVENTO ESTE
             JOIN PRECIO_CON_FECHA_EXTRA_SUB_TIPO_EVENTO EXTRA ON ESTE.ID = EXTRA.EXTRA_SUB_TIPO_EVENTO_ID
-        
+
         ORDER BY
             ID ASC;
 
@@ -56,9 +56,9 @@ class NativeQuerys:
         FROM
             TIPO_CATERING ESTE
             JOIN PRECIO_CON_FECHA_TIPO_CATERING EXTRA ON ESTE.ID = EXTRA.TIPO_CATERING_ID
-        
+
         UNION
-        
+
         SELECT
             DISTINCT EXTRA.ID AS ID,
             EXTRA.NOMBRE,
@@ -81,9 +81,9 @@ class NativeQuerys:
         FROM
             EXTRA_VARIABLE_SUB_TIPO_EVENTO ESTE
             JOIN PRECIO_CON_FECHA_EXTRA_VARIABLE_SUB_TIPO_EVENTO EXTRA ON ESTE.ID = EXTRA.EXTRA_VARIABLE_SUB_TIPO_EVENTO_ID
-        
+
         UNION
-        
+
         SELECT DISTINCT 
             EXTRA.ID AS ID,
             EXTRA.NOMBRE AS NOMBRE,
@@ -95,7 +95,6 @@ class NativeQuerys:
             WHERE E.SALON_ID IS NOT NULL
         ORDER BY ID ASC;
         """
-
 
     queryForExtrasMigradosNoDuplicadosAgendaza = """
     SELECT
@@ -129,14 +128,16 @@ class NativeQuerys:
 
     """
 
-    queryForCargoETL = query = """
-    SELECT u.id_Agendaza AS usuario_id, r.id, r.nombre AS tipo_cargo, s.id AS empresa_id
-    FROM usuario u
+    queryForCargoETL = """
+    select distinct u.id as usuario_id , r.id, r.nombre AS tipo_cargo, s.id AS empresa_id FROM usuario u
     JOIN rol r ON u.rol_id = r.id
     JOIN evento e ON u.id = e.usuario_id
     JOIN salon s ON s.id = e.salon_id
-    GROUP BY u.id, r.id, s.id
-    ORDER BY usuario_id;
+	ORDER BY usuario_id;
+    """
+
+    queryForCargoETL2 = """
+        SELECT * FROM ROL
     """
 
     queryForCapacidadGeserveApp = """select distinct capacidad_adultos , capacidad_ninos  from capacidad;"""
@@ -151,14 +152,14 @@ class NativeQuerys:
             STE.CAPACIDAD_ID,
             UPPER(TE.NOMBRE) AS DURACION,
             PCFS.SALON_ID AS EMPRESA_ID
-            
+
         FROM
             SUB_TIPO_EVENTO STE
             JOIN TIPO_EVENTO TE ON TE.ID = STE.TIPO_EVENTO_ID
             JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO PCFS ON  STE.ID =PCFS.SUB_TIPO_EVENTO_ID
 
         UNION
-        
+
         SELECT DISTINCT
             STE.ID,
             STE.NOMBRE,
@@ -218,7 +219,7 @@ class NativeQuerys:
         UPPER(MDP.NOMBRE) AS MEDIO_DE_PAGO,
         P.USUARIO_ID AS ENCARGADO_ID,
         P.EVENTO_ID AS EVENTO_ID
-        
+
     FROM
         PAGO P
         JOIN MEDIO_DE_PAGO MDP ON P.MEDIO_DE_PAGO_ID = MDP.ID;
@@ -230,7 +231,7 @@ class NativeQuerys:
         S.ID,
         S.NOMBRE ,
         PCF.SALON_ID AS EMPRESA_ID
-        
+
     FROM SERVICIO S
         JOIN SUB_TIPO_EVENTO_SERVICIO STES ON S.ID = STES.SERVICIO_ID
         JOIN SUB_TIPO_EVENTO STE ON STE.ID = STES.SUB_TIPO_EVENTO_ID
@@ -244,7 +245,7 @@ class NativeQuerys:
         SERVICIO_ID
     FROM
 	    SUB_TIPO_EVENTO_SERVICIO;
-    
+
     """
 
     queryForEventoExtraVariable = """
@@ -265,7 +266,7 @@ class NativeQuerys:
         EVENTO_EXTRA_SUB_TIPO_EVENTO
     """
 
-    queryForSubTipoEventoTipoCatering= """
+    queryForSubTipoEventoTipoCatering = """
     SELECT
         SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
         TIPO_CATERING_ID AS EXTRA_ID
@@ -273,7 +274,7 @@ class NativeQuerys:
         SUB_TIPO_EVENTO_TIPO_CATERING;
     """
 
-    queryFroSubTipoEvento ="""
+    queryFroSubTipoEvento = """
     SELECT
         SUB_TIPO_EVENTO_ID AS TIPO_EVENTO_ID,
         EXTRA_ID AS EXTRA_ID
@@ -295,6 +296,6 @@ class NativeQuerys:
         EXTRA_VARIABLE_ID AS EXTRA_ID
     FROM
         SUB_TIPO_EVENTO_EXTRA_VARIABLE;
-    
+
     """
 

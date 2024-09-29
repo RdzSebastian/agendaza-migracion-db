@@ -18,6 +18,29 @@ class ForeignLegacyVsNewAux:
     extra_sub_tipo_evento_id_legacy_vs_agendaza_id = {}
     extra_variable_catering_id_legacy_vs_agendaza_id = {}
 
+    extra_tipo_table = {
+        "VARIABLE_CATERING" : "VARIABLE_CATERING",
+        "EVENTO" : "SUB_TIPO_EVENTO",
+        "TIPO_CATERING" : "TIPO_CATERING",
+        "VARIABLE_EVENTO" : "VARIABLE_SUB_TIPO_EVENTO",
+    }
+
+    precio_con_fecha_hora_Table = {
+        "VARIABLE_CATERING" : "PRECIO_CON_FECHA_HORA_EXTRA_VARIABLE_CATERING",
+        "EVENTO" : "PRECIO_CON_FECHA_HORA_EXTRA_SUB_TIPO_EVENTO",
+        "TIPO_CATERING" : "PRECIO_CON_FECHA_HORA_EXTRA_TIPO_CATERING",
+        "VARIABLE_EVENTO" : "PRECIO_CON_FECHA_HORA_EXTRA_VARIABLE_SUB_TIPO_EVENTO",
+    }
+
+    evento_Extra_table = {
+        "TIPO_CATERING" : "SUB_TIPO_EVENTO_TIPO_CATERING",
+        "EVENTO" : "SUB_TIPO_EVENTO_EXTRA",
+        "VARIABLE_EVENTO" : "SUB_TIPO_EVENTO_EXTRA_VARIABLE",
+        "VARIABLE_CATERING" : "SUB_TIPO_EVENTO_EXTRA_VARIABLE",
+    }
+
+
+
 
     def setEmpresaIds(self, empresaList):
         for item in empresaList:
