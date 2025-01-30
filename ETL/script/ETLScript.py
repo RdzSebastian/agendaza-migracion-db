@@ -786,8 +786,6 @@ async def main():
     await eventoETL()
     await pagoETL()
     await servicioETLV2()
-    '''
-    await servicioETL()
     await tipoEventoServicioETL()
     await eventoExtraVariable()
     await eventoExtraETL()
@@ -795,10 +793,7 @@ async def main():
     await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariableCatering, "VARIABLE_CATERING")
-    
-    
-    
-    '''
+
 
     infoLog.finalizarTiempo()
     infoLog.tiempoDeEjecucion()
