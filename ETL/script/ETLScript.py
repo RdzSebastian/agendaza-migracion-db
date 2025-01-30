@@ -1,4 +1,5 @@
 from colorama import Fore
+from sqlalchemy.orm.base import PASSIVE_OFF
 
 from ETL.Conexión import conexionAgendaza
 from ETL.Conexión import conexionGeserveApp
@@ -15,6 +16,7 @@ from ETL.gerservapp_legacy.Legacy import Legacy
 import asyncio
 
 import logging
+
 
 
 # Ejemplo de uso
@@ -752,6 +754,20 @@ async def servicioETLV2():
     await infoLog.resultadoValidacion(conteo, await servicioRepository.count())
 
 
+async def empresaServicioETL():
+    global geserveAppQueries
+    global empresaServicioRepository
+    global nativeQuerys
+    listaDeEmpresaServiciosLegacy = list(await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEmpresaServicioGeserveApp))
+    listaDeEmpresaServiciosAMigrar = []
+
+    print("EMPRESA_SERVICIO_LEGACY COUNT",len(listaDeEmpresaServiciosLegacy))
+
+    conteo = await infoLog.expectativa2(listaDeEmpresaServiciosLegacy, await servicioRepository.count(),
+                                        "SERVICIO JOIN SUB_TIPO_EVENTO_SERVICIO JOIN SUB_TIPO_EVENTO JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO",
+                                        "EMPRESA_SERVICIO")
+
+
 
 
 ##############################################################################################################
@@ -793,8 +809,7 @@ async def main():
     await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariableCatering, "VARIABLE_CATERING")
-
-
+    await empresaServicioETL()
     infoLog.finalizarTiempo()
     infoLog.tiempoDeEjecucion()
 
@@ -841,6 +856,8 @@ from repositorio.EventoExtraRepository import EventoExtraRepository
 from ETL.agendaza.EventoExtra import EventoExtra
 from repositorio.TipoEventoExtraRepository import TipoEventoExtraRepository
 from ETL.agendaza.TipoEventoExtra import TipoEventoExtra
+from repositorio.EmpresaServicioRepository import EmpresaServicioRepository
+
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
@@ -872,6 +889,7 @@ tipoEventoServicioRepository = TipoEventoServicioRepository(conexionAgendaza.ses
 eventoExtraVariableRepository = EventoExtraVariableRepository(conexionAgendaza.session)
 eventoExtraRepository = EventoExtraRepository(conexionAgendaza.session)
 tipoEventoExtraRepository = TipoEventoExtraRepository(conexionAgendaza.session)
+empresaServicioRepository = EmpresaServicioRepository(conexionAgendaza.session)
 logging.basicConfig(level=logging.INFO)
 infoLog = InfoLog()
 # Ejecutar el bucle principal

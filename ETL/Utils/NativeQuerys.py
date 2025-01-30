@@ -302,3 +302,15 @@ class NativeQuerys:
     queryForServicioV2 = """
         SELECT ID ,NOMBRE from SERVICIO
     """
+
+    queryForEmpresaServicioGeserveApp = """
+    SELECT
+        DISTINCT
+        PCF.SALON_ID AS EMPRESA_ID,
+        S.ID as SERVICIO_ID
+    FROM SERVICIO S
+        JOIN SUB_TIPO_EVENTO_SERVICIO STES ON S.ID = STES.SERVICIO_ID
+        JOIN SUB_TIPO_EVENTO STE ON STE.ID = STES.SUB_TIPO_EVENTO_ID
+        JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO PCF ON PCF.SUB_TIPO_EVENTO_ID = STE.ID
+    ORDER BY S.ID ASC;
+    """
