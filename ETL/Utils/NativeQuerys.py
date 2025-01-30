@@ -299,3 +299,6 @@ class NativeQuerys:
 
     """
 
+    queryForServicioV2 = """
+        SELECT ID ,NOMBRE from SERVICIO
+    """

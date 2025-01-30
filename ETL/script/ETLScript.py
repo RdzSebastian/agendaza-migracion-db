@@ -53,6 +53,7 @@ async def columnasAuxiliares():
             print(f"No se pudo obtener el valor máximo de ID para {table_name}. No se reinició la secuencia.")
 
         # Lista de tablas y secuencias
+
     tables_sequences = [
         ("usuario", "usuario_id_seq"),
         ("empresa", "empresa_id_seq"),
@@ -706,7 +707,7 @@ async def tipoEventoExtraETL(query, tipo):
     listaAMigrar = list(await geserveAppQueries.sqlNativeQuery(query))
 
     conteo = await infoLog.expectativa2(listaAMigrar, await tipoEventoExtraRepository.count(),
-                                        foreignLegacyVsNewAux.evento_Extra_table.get(tipo) , "TIPO_EVENTO")
+                                        foreignLegacyVsNewAux.evento_Extra_table.get(tipo), "TIPO_EVENTO")
     listaAGuardar = []
 
     for tipoEventoExtraLegacy in listaAMigrar:
@@ -724,6 +725,33 @@ async def tipoEventoExtraETL(query, tipo):
 
     await tipoEventoExtraRepository.saveAll(listaAGuardar)
     await infoLog.resultadoValidacion(conteo, await tipoEventoExtraRepository.count())
+
+
+async def servicioETLV2():
+    global geserveAppQueries
+    global servicioRepository
+    global nativeQuerys
+    global foreignLegacyVsNewAux
+
+    listaDeServiciosLegacy = list(await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForServicioV2))
+    listaDeServiciosAMigrar = []
+
+    conteo = await infoLog.expectativa2(listaDeServiciosLegacy, await servicioRepository.count(), "SERVICIO",
+                                        "SERVICIO")
+
+    for servicioLegacy in listaDeServiciosLegacy:
+        servicioAMigrar = Servicio(fecha_baja=None,
+                                   nombre=servicioLegacy.nombre,
+                                   servicio_id_legacy=servicioLegacy.id
+                                   )
+
+        listaDeServiciosAMigrar.append(servicioAMigrar)
+
+    await servicioRepository.saveAll(listaDeServiciosAMigrar)
+    await postServicioETL(listaDeServiciosAMigrar)
+    await infoLog.resultadoValidacion(conteo, await servicioRepository.count())
+
+
 
 
 ##############################################################################################################
@@ -757,6 +785,8 @@ async def main():
     await precioConFechaEventoRepositoryETL()
     await eventoETL()
     await pagoETL()
+    await servicioETLV2()
+    '''
     await servicioETL()
     await tipoEventoServicioETL()
     await eventoExtraVariable()
@@ -765,6 +795,11 @@ async def main():
     await tipoEventoExtraETL(nativeQuerys.queryFroSubTipoEvento, "EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariable, "VARIABLE_EVENTO")
     await tipoEventoExtraETL(nativeQuerys.queryForSubTipoEventoExtraVariableCatering, "VARIABLE_CATERING")
+    
+    
+    
+    '''
+
     infoLog.finalizarTiempo()
     infoLog.tiempoDeEjecucion()
 
