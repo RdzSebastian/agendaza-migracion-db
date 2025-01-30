@@ -10,7 +10,6 @@ from ETL.Utils.ForeignLegacyVsNewAux import ForeignLegacyVsNewAux
 from ETL.Utils.InfoLog import InfoLog
 from ETL.Utils.NativeQuerys import NativeQuerys
 from ETL.Utils.ExtraGeserveAppVsExtraAgendaza import ExtraGeserveAppVsExtraAgendaza
-
 from ETL.gerservapp_legacy.Legacy import Legacy
 
 import asyncio
@@ -769,9 +768,24 @@ async def empresaServicioETL():
 
     print("EMPRESA_SERVICIO_LEGACY COUNT", len(listaDeEmpresaServiciosLegacy))
 
-    conteo = await infoLog.expectativa2(listaDeEmpresaServiciosLegacy, await servicioRepository.count(),
+    conteo = await infoLog.expectativa2(listaDeEmpresaServiciosLegacy, await empresaServicioRepository.count(),
                                         "SERVICIO JOIN SUB_TIPO_EVENTO_SERVICIO JOIN SUB_TIPO_EVENTO JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO",
                                         "EMPRESA_SERVICIO")
+    # foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id[servicioMigrado.servicio_id_legacy] = servicioMigrado.id
+    for item in listaDeEmpresaServiciosLegacy:
+        empresa_id = foreignLegacyVsNewAux.empresa_id_legacy_vs_agendaza_id.get(item.empresa_id)
+        servicio_id = foreignLegacyVsNewAux.servicio_id_legacy_vs_agendaza_id.get(item.servicio_id)
+        empresa_servicio_a_migrar = EmpresaServicio(
+            empresa_id=empresa_id,
+            servicio_id=servicio_id,
+            empresa_id_legacy=item.empresa_id,
+            servicio_id_legacy=item.servicio_id
+        )
+
+        listaDeEmpresaServiciosAMigrar.append(empresa_servicio_a_migrar)
+
+    await empresaServicioRepository.saveAll(listaDeEmpresaServiciosAMigrar)
+    await infoLog.resultadoValidacion(conteo, await empresaServicioRepository.count())
 
 
 ##############################################################################################################
@@ -861,6 +875,7 @@ from ETL.agendaza.EventoExtra import EventoExtra
 from repositorio.TipoEventoExtraRepository import TipoEventoExtraRepository
 from ETL.agendaza.TipoEventoExtra import TipoEventoExtra
 from repositorio.EmpresaServicioRepository import EmpresaServicioRepository
+from ETL.agendaza.EmpresaServicio import EmpresaServicio
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
