@@ -40,6 +40,11 @@ async def main():
     try:
         queryDeleteFromList = []
 
+        queryDeleteFromList.append(
+            QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EMPRESA_SERVICIO where empresa_id_legacy IS NOT NULL"))
+
+        queryDeleteFromList.append(
+            QueryDeleteyBase(agendazaAppQueries, "DELETE FROM EMPRESA_SERVICIO where servicio_id_legacy IS NOT NULL"))
 
         queryDeleteFromList.append(
             QueryDeleteyBase(agendazaAppQueries,
@@ -97,6 +102,8 @@ async def main():
 
         queryDeleteFromList.append(QueryDeleteyBase(agendazaAppQueries, "DELETE FROM capacidad where es_migrado IS TRUE"))
 
+
+
         async def deleteQuerys():
             for item in queryDeleteFromList:
                 await item.borrarRegistros()
@@ -104,6 +111,10 @@ async def main():
         await deleteQuerys()
 
         async def alterTableQuerys():
+            await agendazaAppQueries.sqlNativeQuery(
+                "ALTER TABLE EMPRESA_SERVICIO DROP COLUMN IF EXISTS  servicio_id_legacy")
+            await agendazaAppQueries.sqlNativeQuery(
+                "ALTER TABLE EMPRESA_SERVICIO DROP COLUMN IF EXISTS  empresa_id_legacy")
             await agendazaAppQueries.sqlNativeQuery(
                 "ALTER TABLE tipo_evento_extra DROP COLUMN IF EXISTS  tipo_evento_id_legacy")
             await agendazaAppQueries.sqlNativeQuery(

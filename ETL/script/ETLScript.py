@@ -18,7 +18,6 @@ import asyncio
 import logging
 
 
-
 # Ejemplo de uso
 
 
@@ -126,6 +125,12 @@ async def columnasAuxiliares():
 
     await agendazaAppQueries.sqlNativeQuery(
         "ALTER TABLE TIPO_EVENTO_EXTRA ADD COLUMN extra_sub_tipo_evento_extra_variable_catering INTEGER");
+
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE EMPRESA_SERVICIO ADD COLUMN empresa_id_legacy INTEGER");
+
+    await agendazaAppQueries.sqlNativeQuery(
+        "ALTER TABLE EMPRESA_SERVICIO ADD COLUMN servicio_id_legacy INTEGER");
 
 
 async def ETLUsuario():
@@ -758,16 +763,15 @@ async def empresaServicioETL():
     global geserveAppQueries
     global empresaServicioRepository
     global nativeQuerys
-    listaDeEmpresaServiciosLegacy = list(await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEmpresaServicioGeserveApp))
+    listaDeEmpresaServiciosLegacy = list(
+        await geserveAppQueries.sqlNativeQuery(nativeQuerys.queryForEmpresaServicioGeserveApp))
     listaDeEmpresaServiciosAMigrar = []
 
-    print("EMPRESA_SERVICIO_LEGACY COUNT",len(listaDeEmpresaServiciosLegacy))
+    print("EMPRESA_SERVICIO_LEGACY COUNT", len(listaDeEmpresaServiciosLegacy))
 
     conteo = await infoLog.expectativa2(listaDeEmpresaServiciosLegacy, await servicioRepository.count(),
                                         "SERVICIO JOIN SUB_TIPO_EVENTO_SERVICIO JOIN SUB_TIPO_EVENTO JOIN PRECIO_CON_FECHA_SUB_TIPO_EVENTO",
                                         "EMPRESA_SERVICIO")
-
-
 
 
 ##############################################################################################################
@@ -857,7 +861,6 @@ from ETL.agendaza.EventoExtra import EventoExtra
 from repositorio.TipoEventoExtraRepository import TipoEventoExtraRepository
 from ETL.agendaza.TipoEventoExtra import TipoEventoExtra
 from repositorio.EmpresaServicioRepository import EmpresaServicioRepository
-
 
 usuarioLegacyRepository = UsuarioLegacyRepository(conexionGeserveApp.session)
 usuarioAgendazaRepository = UsuarioRepository(conexionAgendaza.session)
