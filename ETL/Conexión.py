@@ -14,11 +14,11 @@ agendaza_db_parametros = {
     'port': '5432'
 }
 geservapp_db_parametros = {
-    'dbname': 'geserveapp',
+    'dbname': 'geservapp',
     'user': 'postgres',
     'password': 'postgres',
     'host': 'localhost',
-    'port': '5433'
+    'port': '5432'
 }
 
 
